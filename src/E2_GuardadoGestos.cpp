@@ -1,7 +1,11 @@
 // Aplicacacion test para comprobar datos por pantalla
 //
 
+#define String std::string
+
 #include <iostream>
+#include <fstream>
+#include <filesystem>
 #include <thread>
 
 #include <SenseGlove/Connect/SGConnect.hpp>
@@ -19,32 +23,12 @@
 #include <SenseGlove/Core/Tracking.hpp>
 #include <SenseGlove/Core/StringUtils.hpp>
 
-
 using namespace SGCore;
 using namespace SGCore::Kinematics;
 
-/// <summary> Test a vibration, taking into account timing </summary>
-static void TestVibration(bool rightHand, float amplitude, float duration, float frequency, SGCore::EHapticLocation location)
-{
-    if (!HandLayer::DeviceConnected(rightHand))
-        return;
-
-    std::string hand = rightHand ? "right hand" : "left hand";
-    if (HandLayer::SupportsCustomWaveform(rightHand, location)) {
-        SGCore::CustomWaveform waveform{amplitude, duration, frequency};
-        HandLayer::SendCustomWaveform(rightHand, waveform, location);
-    } else {
-        std::cout << ("The " + hand + " does not support Custom Waveforms (at " + HapticGlove::ToString(location) + "), so we're sending a vibration to the Index Finger instead") << std::endl;
-        //whole hand and / or custom waveforms not supported. So we're pulsing the index finger instead.
-        HandLayer::QueueCommand_VibroLevel(rightHand, 1, 1.0f, true);
-        std::this_thread::sleep_for(std::chrono::milliseconds( (int32_t)(duration * 1000) )); //s to ms
-        HandLayer::QueueCommand_VibroLevel(rightHand, 1, 0.0f, true);//turn it back off
-    }
-}
-
 /// <summary> Test HandPoses </summary>
 /// <param name="rightHand"></param>
-static void TestHandTracking(bool rightHand, int iteraciones)
+static void TestHandTracking(bool rightHand)
 {
     if (!HandLayer::DeviceConnected(rightHand))
         return;
@@ -87,42 +71,76 @@ static void TestHandTracking(bool rightHand, int iteraciones)
         std::cout << ("Press a key to grab a HandPose for the " + hand) << std::endl;
         system("pause");
     }
-
     //Actually grab a HandPose
-    for (int i = 0; i < iteraciones; i++){
-
-        if (HandLayer::GetHandPose(rightHand, handPose)) {
-            std::cout << ("/////////////// Grabbed a HandPose for the " + hand + ":") << std::endl;
-            std::cout <<(handPose.ToString()) << std::endl;
-        } else {
-            std::cout << ("We couldn't grab a " + hand + " pose. That can happen because sensor data was corrupted, or because the glove is (no longer) connected. Try again later..") << std::endl;
-        }
+    if (HandLayer::GetHandPose(rightHand, handPose)) {
+        std::cout << ("Grabbed a HandPose for the " + hand + ":") << std::endl;
+        std::cout << (handPose.ToString()) << std::endl;
+    } else {
+        std::cout << ("We couldn't grab a " + hand + " pose. That can happen because sensor data was corrupted, or because the glove is (no longer) connected. Try again later..") << std::endl;
     }
 }
 
-/// <summary> Test Wrist Tracking </summary>
-/// <param name="rightHand"></param>
-static void TestWristTracking(bool rightHand)
-{
-    if (!HandLayer::DeviceConnected(rightHand))
-        return;
-    std::string hand = rightHand ? "Right hand" : "Left hand";
+static std::string GuardarGestoBasico(bool derecha, std::string dedo){
 
-    // Since our Gloves do not have their own on-board tracking, we rely on another Tracking Source, like a Quest 2 controller:
-    EPositionalTrackingHardware trackingHardware = EPositionalTrackingHardware::Quest2Controller;
-    Vect3D trackerPosition = Vect3D(0.0f, 0.0f, 0.0f);
-    Quat trackerRotation = Quat::FromEuler(0.0f, 0.0f, 0.0f);
+    if (!HandLayer::DeviceConnected(derecha))
+        return "ERROR: Guante a capturar gestos no conectado";
 
-    // We then calculate the wrist location as follows:
-    Vect3D wristPosition;
-    Quat wristRotation;
-    HandLayer::GetWristLocation(rightHand, trackerPosition, trackerRotation, trackingHardware, wristPosition, wristRotation);
+    std::string hand = derecha ? "derecha" : "izquierda";
+    SGCore:HandPose handPose;
 
-    std::cout << (hand + " wrist position (" + trackerPosition.ToString() + " mm, " + trackerRotation.ToEuler().ToString() + " rad) for "
-        + Tracking::ToString( trackingHardware ) + ": => " + wristPosition.ToString() + " mm, " + wristRotation.ToEuler().ToString() + " rad.") << std::endl;
+    //Comprobamos camino y creamos ruta
+
+    String rutaArchivoLocal = ("\\..\\data\\guantes\\"+ hand +"\\dedos\\"+dedo);
+
+    std::filesystem::path pa = std::filesystem::current_path();
+ 
+    std::cout << "The current path: " << pa;
+
+    std::filesystem::path rutaArchivo = pa.string() + rutaArchivoLocal;
+
+    std::cout << "The current path: " << rutaArchivo;
+
+    if (std::filesystem::exists(rutaArchivo))
+        std::cout << "File or directory exists\n";
+    else
+        //Reemplazar por creacion del directorio? O una afirmacion del usuario
+        return "File or directory does not exist";
+
+    //Obtenemos datos del gesto
+
+    String datosGesto;
+    
+    std::cout<<("Presione una tecla mientras matiene el gesto a guardar con el dedo")  << std::endl;;
+    
+    std::cin.get();
+    
+    if (HandLayer::GetHandPose(derecha, handPose)) {
+        std::cout << ("Grabbed a HandPose for the " + hand + ":") << std::endl;
+        std::cout << (handPose.ToString()) << std::endl;
+    } else {
+        return "We couldn't grab a " + hand + " pose. That can happen because sensor data was corrupted, or because the glove is (no longer) connected. Try again later..";
+        
+    }    
+
+    datosGesto = handPose.ToString();
+
+    //Generamos fichero
+
+    String nombreArchivo;
+    
+    std::cout<<("Introduzca nombre del gesto:")  << std::endl;
+    std::cin >> nombreArchivo;
+    std::ofstream ArchivoGesto (rutaArchivo.string() + "\\" +nombreArchivo+".txt");
+
+    std::cout << "The current path " << (rutaArchivo.string() + "\\" +nombreArchivo+".txt") + " decomposes into:\n";
+
+    ArchivoGesto << datosGesto;
+
+    ArchivoGesto.close();
+
+    return "Operacion completada con exito";
+
 }
-
-
 
 int32_t main()
 {
@@ -207,42 +225,113 @@ int32_t main()
     //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
     // Finger Tracking
     {
-        std::string iters_s;
-        int iters = 0;
-        std::cout << ("Vamos a obtener y mostrar los datos del guante. Presione enter para continuar. ") << std::endl;
-        std::cout << ("Alternativamente introduzca el numero de iteraciones (Tiempo a mostrar los datos, defecto: 1000)") << std::endl;
-        //std::cin >> iters;
+        std::cout << ("Vamos a probar el tracking de los dedos") << std::endl;
 
-        std::cin.ignore();
-
-        TestHandTracking(true, 1000);
-        TestHandTracking(false, 1000);
+        TestHandTracking(true);
+        TestHandTracking(false);
 
         std::cout << ("-------------------------------------------------------------------------") << std::endl;
     }
 
     //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    // 6Dof Wrist Tracking
+    // Guardado de Gestos
+    // Se selecionara una mano a guardar el gesto.
+    // Despues se pedira que dedo se quiere guardar la posicion
+    // Finalmente se guardaran los datos en la carpeta correspondiente en data
     {
-        std::cout << ("Finally, we'll test wrist tracking") << std::endl;
 
-        TestWristTracking(true);
-        TestWristTracking(false);
+        int32_t gloveAmount = HandLayer::GlovesConnected(); //GlovesConnected gives you the amount of gloves connected to your system.
+        bool salir = false;
+        bool atras = false;
+        bool g_derecho = false;
+
+        std::string respuesta;
+
+        std::cout << ("Vamos a proceder a la lectura y guardado de gestos.") << std::endl;
+        std::cout << ("El proceso se puede hacer individualmente por cada dedo, o hacer una lectura completa de la mano.") << std::endl;
+        std::cout << ("(Presione enter para continuar)") << std::endl;
+        std::cin.get();
+        
+        do {
+            salir = false;
+            //Comprobamos cuantos guantes hay conectados
+            if (gloveAmount == 1){
+                std::cout<< ("Hay 1 guante conectado al ordenador.") <<std::endl;
+
+                if(HandLayer::DeviceConnected(true)){
+                    std::cout<< ("El guante conectado es el derecho. Los gestos se guardaran para la mano derecha.") <<std::endl;
+                    g_derecho = true;
+                } else if (HandLayer::DeviceConnected(false)){
+                    std::cout<< ("El guante conectado es el izquierdo. Los gestos se guardaran para la mano izquierda.") <<std::endl;
+                    g_derecho = false;                    
+                }
+            } else if (gloveAmount == 2){
+                std::cout<< ("Hay 2 guantes conectados al ordenador.") <<std::endl;
+                if(HandLayer::DeviceConnected(true)){
+                    std::cout<< ("Hay un guante derecho conectado.") <<std::endl;
+                }
+                if (HandLayer::DeviceConnected(false)){
+                    std::cout<< ("El guante conectado es el izquierdo. Los gestos se guardaran para la mano izquierda.") <<std::endl;
+                }
+
+                do {
+                    std::cout << ("Por favor, elija una mano a capturar gestos:") << std::endl;
+                    std::cout << ("---- 1: Izquierda") << std::endl;
+                    std::cout << ("---- 2: Derecha") << std::endl;
+                    std::cout << ("---- 3: Salir") << std::endl;   
+                    std::cin >> respuesta;         
+                } while (respuesta != "1" && respuesta != "2" && respuesta != "3");
+
+                if (respuesta == "1"){
+                    std::cout<< ("Los gestos se guardaran para la mano izquierda.") <<std::endl;
+                    g_derecho = false;                    
+                } else if (respuesta == "2"){
+                    std::cout<< ("Los gestos se guardaran para la mano derecha.") <<std::endl;
+                    g_derecho = true;                    
+                } else salir = true;
+
+            }
+            if (!salir){
+                do {
+                    atras = false;
+                    do {
+                        std::cout << ("Por favor, elija una opcion:") << std::endl;
+                        std::cout << ("---- 1: Basico (Un dedo)") << std::endl;
+                        std::cout << ("---- 2: Compuesto (De varios basicos)") << std::endl;
+                        std::cout << ("---- 3: Atras") << std::endl;
+                        std::cin >> respuesta;
+                    } while (respuesta != "1" && respuesta != "2" && respuesta != "3");
+
+                    if (respuesta == "1"){
+                        do{
+                            std::cout << ("Elija un dedo:") << std::endl;
+                            std::cout << ("---- 1: Pulgar") << std::endl;
+                            std::cout << ("---- 2: Indice") << std::endl;
+                            std::cout << ("---- 3: Anular") << std::endl;          
+                            std::cout << ("---- 4: Corazon") << std::endl;
+                            std::cout << ("---- 5: Atras") << std::endl;       
+                            std::cin >> respuesta;       
+                        } while (respuesta != "1" && respuesta != "2" && respuesta != "3" && respuesta != "4" && respuesta != "5");
+                        
+                        if (respuesta != "5"){
+                            std::cout<< GuardarGestoBasico(g_derecho,respuesta) << std::endl;
+                            std::cin.get();
+                        }
+
+                    } else if (respuesta == "2"){
+                        std::cout << ("TO-DO") << std::endl;
+                    } else{
+                        atras = true;
+                    }
+                } while (!atras);
+            }
+
+        } while (!salir);
+
+        std::cout << ("-------------------------------------------------------------------------") << std::endl;
     }
-
 
     std::cout << "=========================================================================" << std::endl;
     std::cout << "Press any key to exit." << std::endl;
     system("pause");
 }
-
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started:
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file

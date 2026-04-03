@@ -1,14 +1,24 @@
 cmake_minimum_required(VERSION 3.10)
-project(SenseGloveTest)
+project(TFG-SENSEGLOVE-ROS)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_GLIBCXX_USE_CXX11_ABI=0")
+
+set(CMAKE_CXX_STANDARD 17)
 
 include_directories(
     ${PROJECT_SOURCE_DIR}/include
 )
 
+add_executable(E2_GuardadoGestos
+    src/E2_GuardadoGestos.cpp
+)
+
 add_executable(E1_TestDatos
-    examples/E1_TestDatos.cpp
+    src/E1_TestDatos.cpp
+)
+
+add_executable(sgcore-client
+    src/sgcore-client.cpp
 )
 
 # Paths
@@ -30,6 +40,16 @@ set_target_properties(SGConnectLib PROPERTIES
 
 # Link
 target_link_libraries(E1_TestDatos
+    SGCoreLib
+    SGConnectLib
+)
+
+target_link_libraries(sgcore-client
+    SGCoreLib
+    SGConnectLib
+)
+
+target_link_libraries(E2_GuardadoGestos
     SGCoreLib
     SGConnectLib
 )
