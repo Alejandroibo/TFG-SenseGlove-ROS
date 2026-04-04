@@ -3,6 +3,7 @@
 
 #define String std::string
 
+#include <string>
 #include <iostream>
 #include <fstream>
 #include <filesystem>
