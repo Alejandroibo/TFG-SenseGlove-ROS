@@ -3,6 +3,7 @@
 #include <string>
 #include <cstdlib>
 #include <vector>
+#include <map>
 
 #ifndef CONJUNTOGESTOS_H
 
@@ -13,6 +14,7 @@ using namespace std;
 class ConjuntoGestos{
     private:
         vector<Gesto> gestos;
+        //map<string, Gesto> gestos;
 
     public:
         ConjuntoGestos();
@@ -22,7 +24,7 @@ class ConjuntoGestos{
 
         //Metodos para determinar parecido
 
-        Gesto getGestoProximo(string infoGesto);
+        Gesto getGestoProximo(Gesto gestoActual, int precision);
 
 };
 

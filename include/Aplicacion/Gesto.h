@@ -19,6 +19,7 @@ enum DIGITO{
 
 class Gesto{
     private:
+        string nombreGesto;
         vector<pair<bool, vector<int>>> informacionGesto;
         int prioridad;
 
@@ -27,7 +28,7 @@ class Gesto{
 
     public:
         Gesto();
-        Gesto(string path);
+        Gesto(string infoGesto);
 
         //Generacion de gesto
         void cargarInformacionDigito(string path, DIGITO digito);

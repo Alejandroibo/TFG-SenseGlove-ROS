@@ -5,6 +5,7 @@
 
 #include "Gesto.h"
 #include "ConjuntoGestos.h"
+#include "LectorEscritorGestos.h"
 
 #include <SenseGlove/Connect/SGConnect.hpp>
 #include <SenseGlove/Core/Debugger.hpp>
@@ -31,7 +32,7 @@ int32_t main(){
     //1: Generamos gestos para testear
     
     Gesto g1, g2, g3;
-    
+    Gesto gestoTest;
 
 
     //2: Activamos reconocimiento
