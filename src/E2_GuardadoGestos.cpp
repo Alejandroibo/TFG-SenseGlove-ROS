@@ -90,6 +90,7 @@ static std::string GuardarGestoBasico(bool derecha, std::string dedo){
     SGCore:HandPose handPose;
 
     //Comprobamos camino y creamos ruta
+    //////////////////////////////////////
 
     String rutaArchivoLocal = ("\\..\\data\\guantes\\"+ hand +"\\dedos\\"+dedo);
 
@@ -108,6 +109,7 @@ static std::string GuardarGestoBasico(bool derecha, std::string dedo){
         return "File or directory does not exist";
 
     //Obtenemos datos del gesto
+    //////////////////////////////////////
 
     String datosGesto;
     
@@ -126,6 +128,7 @@ static std::string GuardarGestoBasico(bool derecha, std::string dedo){
     datosGesto = handPose.ToString();
 
     //Generamos fichero
+    //////////////////////////////////////
 
     String nombreArchivo;
     
@@ -143,8 +146,62 @@ static std::string GuardarGestoBasico(bool derecha, std::string dedo){
 
 }
 
+static std::string CargarGesto(String path, String dedo){
+
+    std::filesystem::path pa = std::filesystem::current_path();
+ 
+    std::cout << "The current path: " << pa;
+
+    std::filesystem::path rutaArchivo = pa.string() + path;
+
+    std::cout << "The current path: " << rutaArchivo;
+
+    if (std::filesystem::exists(rutaArchivo))
+        std::cout << "File or directory exists\n";
+    else
+        //Reemplazar por creacion del directorio? O una afirmacion del usuario
+        return "File or directory does not exist";
+
+    //Abrimos archivo
+    //////////////////////////////
+
+    std::ifstream ArchivoGesto(rutaArchivo);
+
+    //Procesamos informacion:
+    //////////////////////////////
+
+    //Leer hasta espacio
+    //Despues leer hasta coma
+    //Asi hasta terminar la linea? O algo asi
+
+    int linea = std::stoi(dedo);
+    char datos[80];
+    String numero;
+    String resultado ="";
+
+    //Saltamos lineas inecesarias
+    //for (int i = 1; i < linea; i++) ArchivoGesto.getline(datos, 80);
+
+    while (!ArchivoGesto.eof()){
+        ArchivoGesto.get(datos, 80, ' ');
+        ArchivoGesto.get(datos, 80, ',');
+        String numero(datos);
+        resultado += numero;
+    }
+
+    ArchivoGesto.close();
+
+    return resultado;
+
+}
+
 int32_t main()
 {
+
+    std::cout << ("Cargando Archivo de prueba.") << std::endl;
+    std::cout << ("=========================================================================") << std::endl;  
+    std::cout << CargarGesto("/../data/guantes/izquierda/dedos/1/Test1.txt", "1") << std::endl;  
+
     //SGCore::Diagnostics::Debugger::SetDebugLevel(SGCore::Diagnostics::EDebugLevel::All);
     //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
     // Checking the Library
@@ -257,15 +314,18 @@ int32_t main()
             salir = false;
             //Comprobamos cuantos guantes hay conectados
             if (gloveAmount == 1){
-                std::cout<< ("Hay 1 guante conectado al ordenador.") <<std::endl;
+                if (!atras){
 
-                if(HandLayer::DeviceConnected(true)){
-                    std::cout<< ("El guante conectado es el derecho. Los gestos se guardaran para la mano derecha.") <<std::endl;
-                    g_derecho = true;
-                } else if (HandLayer::DeviceConnected(false)){
-                    std::cout<< ("El guante conectado es el izquierdo. Los gestos se guardaran para la mano izquierda.") <<std::endl;
-                    g_derecho = false;                    
-                }
+                    std::cout<< ("Hay 1 guante conectado al ordenador.") <<std::endl;
+
+                    if(HandLayer::DeviceConnected(true)){
+                        std::cout<< ("El guante conectado es el derecho. Los gestos se guardaran para la mano derecha.") <<std::endl;
+                        g_derecho = true;
+                    } else if (HandLayer::DeviceConnected(false)){
+                        std::cout<< ("El guante conectado es el izquierdo. Los gestos se guardaran para la mano izquierda.") <<std::endl;
+                        g_derecho = false;                    
+                    }
+                } else salir = true;
             } else if (gloveAmount == 2){
                 std::cout<< ("Hay 2 guantes conectados al ordenador.") <<std::endl;
                 if(HandLayer::DeviceConnected(true)){

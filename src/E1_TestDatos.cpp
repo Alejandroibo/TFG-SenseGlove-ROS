@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <thread>
+#include <vector>
 
 #include <SenseGlove/Connect/SGConnect.hpp>
 #include <SenseGlove/Core/Debugger.hpp>
@@ -44,7 +45,7 @@ static void TestVibration(bool rightHand, float amplitude, float duration, float
 
 /// <summary> Test HandPoses </summary>
 /// <param name="rightHand"></param>
-static void TestHandTracking(bool rightHand, int iteraciones)
+static void TestHandTracking(bool rightHand, int iteraciones, bool extra = false)
 {
     if (!HandLayer::DeviceConnected(rightHand))
         return;
@@ -93,10 +94,47 @@ static void TestHandTracking(bool rightHand, int iteraciones)
 
         if (HandLayer::GetHandPose(rightHand, handPose)) {
             std::cout << ("/////////////// Grabbed a HandPose for the " + hand + ":") << std::endl;
-            std::cout <<(handPose.ToString()) << std::endl;
+            std::cout <<(handPose.ToString()) << std::endl << std::endl;
+
+            //std::cout <<(handPose.Serialize()) << std::endl << std::endl;
+
+            if (extra){
+                std::cout<<"TESTING DE DATOS DIRECTOS, EN VEZ DE TOSTRING LMAO"<<std::endl;
+                std::cout<<"PRIMER TEST:"<<std::endl;
+                for (int i = 0; i < handPose.GetHandAngles().size(); i++){
+                    for (int j = 0; j < handPose.GetHandAngles()[i].size(); j++ ){
+                        std::cout<<handPose.GetHandAngles()[i][j].ToString() <<" ";
+                    }
+                    std::cout<<"\n/////////////\n";
+                }
+                std::cout<<"\n";
+                std::cout<<"SEGUNDO TEST:"<<std::endl;
+                for (int i = 0; i < handPose.GetJointPositions().size(); i++){
+                    for (int j = 0; j < handPose.GetJointPositions()[i].size(); j++ ){
+                        std::cout<<handPose.GetJointPositions()[i][j].ToString() <<" ";
+                    }
+                    std::cout<<"\n/////////////\n";
+                }
+                std::cout<<"\n";
+                std::cout<<"TERCER TEST:"<<std::endl;
+                for (int i = 0; i < handPose.GetJointRotations().size(); i++){
+                    for (int j = 0; j < handPose.GetJointRotations()[i].size(); j++ ){
+                        std::cout<<handPose.GetJointRotations()[i][j].ToString() <<" ";
+                    }
+                    std::cout<<"\n/////////////\n";
+                }
+                std::cout<<"\n";
+                std::cout<<"CUARTO TEST:"<<std::endl;
+                for (int i = 0; i < handPose.GetNormalizedFlexion().size(); i++){
+                    std::cout<<handPose.GetNormalizedFlexion()[i] <<" ";
+                }
+            }
+
         } else {
             std::cout << ("We couldn't grab a " + hand + " pose. That can happen because sensor data was corrupted, or because the glove is (no longer) connected. Try again later..") << std::endl;
         }
+
+        std::cin.get();
     }
 }
 
@@ -210,14 +248,19 @@ int32_t main()
         std::string iters_s;
         int iters = 0;
         std::cout << ("Vamos a obtener y mostrar los datos del guante. Presione enter para continuar. ") << std::endl;
-        std::cout << ("Alternativamente introduzca el numero de iteraciones (Tiempo a mostrar los datos, defecto: 1000)") << std::endl;
+        std::cout << ("Alternativamente introduzca el numero de iteraciones (Tiempo a mostrar los datos, defecto: 5)") << std::endl;
         //std::cin >> iters;
 
-        std::cin.ignore();
+        std::cin.get();
 
-        TestHandTracking(true, 1000);
-        TestHandTracking(false, 1000);
+        TestHandTracking(true, 10);
+        TestHandTracking(false, 10);
+/*
+        std::cin.get();
 
+        TestHandTracking(true, 1, true);
+        TestHandTracking(false, 1, true);
+*/
         std::cout << ("-------------------------------------------------------------------------") << std::endl;
     }
 
