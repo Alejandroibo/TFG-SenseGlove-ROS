@@ -1,0 +1,2 @@
+1
+Thumb:	CMC-Abd: -26,	CMC-Tw: -2,	CMC-Flx: 3,	MCP-Flx: 38,	IP-Flx: 85

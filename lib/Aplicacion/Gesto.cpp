@@ -1,7 +1,15 @@
-#include "Gesto.h";
-#include <cmath>;
+#include "Aplicacion/Gesto.h"
+#include "Aplicacion/LectorEscritorGestos.h"
+
+#include <cmath>
 
 Gesto::Gesto(){
+
+    for (int i = 0; i < 5; i++){
+        pair<bool, vector<int>> par;
+        par.first = false;
+        informacionGesto.push_back(par);
+    }
 
 }
 
@@ -9,13 +17,14 @@ bool Gesto::casiIgual(int objetivo, int aprox, int precision){
     return (abs(objetivo-aprox) <= precision);
 }
 
-void Gesto::cargarInformacionDigito(string path, DIGITO digito){
+void Gesto::cargarInformacionDedo(string ruta){
 
-    string datos;
+    pair<DIGITO, vector<int>> datosDedo = LectorEscritorGestos::cargarDatosDedo(ruta);
 
-    ifstream MyReadFile(path);
+    informacionGesto[datosDedo.first].first = true;
+    informacionGesto[datosDedo.first].second = datosDedo.second;
 
-    //Hay que ver si el archivo de datos ya estara pre-procesado o no
+    //std::cout<<" THIS "<<informacionGesto[datosDedo.first].second[0]<<std::endl;
 
 }
 
@@ -35,11 +44,13 @@ bool Gesto::comprobarGesto(vector<vector<int>> informacion, int precision){
 
     bool esGesto = true;
 
-    for (int i = 0; i < informacion.size(); i++){
+    for (int i = 0; i < informacion.size() && esGesto; i++){
         if (informacionGesto[i].first){
             esGesto = comprobarDigito(informacion[i], static_cast<DIGITO>(i), precision);
         }
     }
+
+    return esGesto;
 
 }
 
@@ -49,4 +60,22 @@ vector<pair<bool, vector<int>>> Gesto::getInfoGesto(){
 
 void Gesto::setInfoGesto(vector<pair<bool, vector<int>>> info){
     informacionGesto = info;
+}
+
+
+string Gesto::to_string(){
+
+    string resultado = "";
+
+    for (int i = 0; i < informacionGesto.size(); i++){
+        if (informacionGesto[i].first == true){
+            resultado += std::to_string(i) + ": ";
+            for (int j = 0; j < informacionGesto[i].second.size(); j++){
+                resultado += std::to_string(informacionGesto[i].second[j]) + " ";
+            }
+            resultado += "\n";
+        }
+    }
+
+    return resultado;
 }

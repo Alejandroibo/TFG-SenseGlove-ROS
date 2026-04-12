@@ -2,8 +2,9 @@
 #include <iostream>
 #include <fstream>
 #include <filesystem>
+#include <cstdlib>
 
-#include "Gesto.h"
+#include "Aplicacion/Gesto.h"
 
 #ifndef LECTORESCRITORGESTOS_H
 
@@ -16,9 +17,13 @@ class LectorEscritorGestos{
 
 
     public:
-        void guardarGestoBasico(bool derecha, string dedo);
-        void guardarGestoCompleto(bool derecha);
-        Gesto cargarGesto(string path);
+        //Guardar
+        static void guardarDatosDedo(bool derecha, string dedo);
+        static void guardarGestoCompleto(bool derecha, Gesto gesto);
+
+        //Cargar
+        static pair<DIGITO, vector<int>> cargarDatosDedo(string path);
+        static Gesto cargarGestoCompleto(string path);
 
 };
 

@@ -4,18 +4,13 @@
 #include <iostream>
 #include <fstream> 
 
+#include "Aplicacion/DigitoEnum.h"
+
 #ifndef GESTO_H
 
 #define GESTO_H
 
 using namespace std;
-
-enum DIGITO{
-    PULGAR,
-    INDICE,
-    ANULAR,
-    CORAZON
-};
 
 class Gesto{
     private:
@@ -31,7 +26,8 @@ class Gesto{
         Gesto(string infoGesto);
 
         //Generacion de gesto
-        void cargarInformacionDigito(string path, DIGITO digito);
+        void cargarInformacionDedo(vector<int> info);
+        void cargarInformacionDedo(string ruta);
 
         //Comprobacion de gesto
         bool comprobarGesto(vector<vector<int>> informacion, int precision);

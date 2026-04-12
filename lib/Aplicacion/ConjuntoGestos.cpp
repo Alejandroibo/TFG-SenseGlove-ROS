@@ -1,6 +1,6 @@
-#include "ConjuntoGestos.h";
-#include "Gesto.h";
-#include <cmath>;
+#include "Aplicacion/ConjuntoGestos.h"
+#include "Aplicacion/Gesto.h"
+#include <cmath>
 
 ConjuntoGestos::ConjuntoGestos(){
 

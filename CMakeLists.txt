@@ -9,6 +9,18 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/include
 )
 
+set(HEADERS ${PROJECT_SOURCE_DIR}/include/Aplicacion/)
+set(IMPLEMENTS ${PROJECT_SOURCE_DIR}/lib/Aplicacion/)
+
+file( GLOB_RECURSE HPPS "${HEADERS}/*.h" "${HEADERS}/*.hpp" )
+file( GLOB_RECURSE CPPS "${IMPLEMENTS}/*.c" "${IMPLEMENTS}/*.cpp" )
+
+add_executable(E3_ReconocimientoGestos
+    src/E3_ReconocimientoGestos.cpp 
+    ${HPPS}
+    ${CPPS}
+)
+
 add_executable(E2_GuardadoGestos
     src/E2_GuardadoGestos.cpp
 )
@@ -50,6 +62,11 @@ target_link_libraries(sgcore-client
 )
 
 target_link_libraries(E2_GuardadoGestos
+    SGCoreLib
+    SGConnectLib
+)
+
+target_link_libraries(E3_ReconocimientoGestos
     SGCoreLib
     SGConnectLib
 )

@@ -3,9 +3,9 @@
 #include <filesystem>
 #include <thread>
 
-#include "Gesto.h"
-#include "ConjuntoGestos.h"
-#include "LectorEscritorGestos.h"
+#include "Aplicacion/Gesto.h"
+#include "Aplicacion/ConjuntoGestos.h"
+#include "Aplicacion/LectorEscritorGestos.h"
 
 #include <SenseGlove/Connect/SGConnect.hpp>
 #include <SenseGlove/Core/Debugger.hpp>
@@ -31,14 +31,16 @@ int32_t main(){
     
     //1: Generamos gestos para testear
     
-    Gesto g1, g2, g3;
-    Gesto gestoTest;
+    Gesto g1;
+    g1.cargarInformacionDedo("/../data/guantes/izquierda/dedos/1/pulgarArriba.txt");
 
+    std::cout<<"Cargamos:"<<std::endl;
+    std::cin.get();
+
+    std::cout<<g1.to_string()<<std::endl;
+
+    std::cin.get();
 
     //2: Activamos reconocimiento
-
-
-
-
 
 }

@@ -81,7 +81,7 @@ static void TestHandTracking(bool rightHand)
     }
 }
 
-static std::string GuardarGestoBasico(bool derecha, std::string dedo){
+static std::string GuardarGestoBasico(bool derecha, String dedo){
 
     if (!HandLayer::DeviceConnected(derecha))
         return "ERROR: Guante a capturar gestos no conectado";
@@ -112,20 +112,43 @@ static std::string GuardarGestoBasico(bool derecha, std::string dedo){
     //////////////////////////////////////
 
     String datosGesto;
-    
-    std::cout<<("Presione una tecla mientras matiene el gesto a guardar con el dedo")  << std::endl;;
-    
-    std::cin.get();
-    
-    if (HandLayer::GetHandPose(derecha, handPose)) {
-        std::cout << ("Grabbed a HandPose for the " + hand + ":") << std::endl;
-        std::cout << (handPose.ToString()) << std::endl;
-    } else {
-        return "We couldn't grab a " + hand + " pose. That can happen because sensor data was corrupted, or because the glove is (no longer) connected. Try again later..";
+    String respuesta;    
+
+    do{
+
+        std::cout<<("Presione una tecla mientras matiene el gesto a guardar con el dedo")  << std::endl;
         
-    }    
+        std::cin.get();
+        std::cin.ignore();
+
+        if (HandLayer::GetHandPose(derecha, handPose)) {
+            std::cout << ("Grabbed a HandPose for the " + hand + ":") << std::endl;
+            std::cout << (handPose.ToString()) << std::endl;
+        } else {
+            return "We couldn't grab a " + hand + " pose. That can happen because sensor data was corrupted, or because the glove is (no longer) connected. Try again later..";
+            
+        }    
+
+        std::cout<<("Desea guardar esos datos? y/n")  << std::endl;
+        std::cin>>respuesta;
+
+    } while (respuesta != "y" && respuesta != "Y");
 
     datosGesto = handPose.ToString();
+    String datoProcesado = datosGesto;
+
+    int dedoInt = stoi(dedo);
+
+    //Cogemos la linea que nos interesa
+    for (int i = 1; i < dedoInt; i++){
+        size_t finlinea = datoProcesado.find_first_of('\n');
+        datoProcesado = datoProcesado.substr(finlinea+1);
+    }
+
+    size_t finlinea = datoProcesado.find_first_of('\n');
+    datoProcesado = datoProcesado.substr(0,finlinea);
+
+    datosGesto = dedo + "\n" + datoProcesado;
 
     //Generamos fichero
     //////////////////////////////////////
@@ -170,23 +193,26 @@ static std::string CargarGesto(String path, String dedo){
     //Procesamos informacion:
     //////////////////////////////
 
-    //Leer hasta espacio
-    //Despues leer hasta coma
-    //Asi hasta terminar la linea? O algo asi
-
     int linea = std::stoi(dedo);
-    char datos[80];
+    char datos[100];
+    char dato;
     String numero;
     String resultado ="";
 
-    //Saltamos lineas inecesarias
-    //for (int i = 1; i < linea; i++) ArchivoGesto.getline(datos, 80);
-
     while (!ArchivoGesto.eof()){
-        ArchivoGesto.get(datos, 80, ' ');
-        ArchivoGesto.get(datos, 80, ',');
+        //std::cout<<"/////"<<std::endl;
+
+        ArchivoGesto.get(datos, 100, ' ');
+        //std::cout<<datos<<std::endl;
+
+        ArchivoGesto.get(dato);
+        //std::cout<<dato<<std::endl;
+
+        ArchivoGesto.get(datos, 10, ',');
+        //std::cout<<datos<<std::endl;
+
         String numero(datos);
-        resultado += numero;
+        resultado += (numero + " ");
     }
 
     ArchivoGesto.close();
@@ -200,7 +226,7 @@ int32_t main()
 
     std::cout << ("Cargando Archivo de prueba.") << std::endl;
     std::cout << ("=========================================================================") << std::endl;  
-    std::cout << CargarGesto("/../data/guantes/izquierda/dedos/1/Test1.txt", "1") << std::endl;  
+    std::cout << CargarGesto("/../data/guantes/izquierda/dedos/1/Test2.txt", "1") << std::endl;  
 
     //SGCore::Diagnostics::Debugger::SetDebugLevel(SGCore::Diagnostics::EDebugLevel::All);
     //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -357,8 +383,8 @@ int32_t main()
                     atras = false;
                     do {
                         std::cout << ("Por favor, elija una opcion:") << std::endl;
-                        std::cout << ("---- 1: Basico (Un dedo)") << std::endl;
-                        std::cout << ("---- 2: Compuesto (De varios basicos)") << std::endl;
+                        std::cout << ("---- 1: Guardar gesto") << std::endl;
+                        std::cout << ("---- 2: Leer gesto") << std::endl;
                         std::cout << ("---- 3: Atras") << std::endl;
                         std::cin >> respuesta;
                     } while (respuesta != "1" && respuesta != "2" && respuesta != "3");
@@ -376,7 +402,7 @@ int32_t main()
                         
                         if (respuesta != "5"){
                             std::cout<< GuardarGestoBasico(g_derecho,respuesta) << std::endl;
-                            std::cin.get();
+                            std::cin.ignore();
                         }
 
                     } else if (respuesta == "2"){
