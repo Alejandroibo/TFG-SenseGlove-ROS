@@ -12,30 +12,45 @@
 
 using namespace std;
 
+struct Dedo{
+    bool activo = false;
+    vector<int> articulaciones;
+};
+
 class Gesto{
     private:
         string nombreGesto;
-        vector<pair<bool, vector<int>>> informacionGesto;
+        bool derecha; 
+        vector<Dedo> informacionGesto;
+        
         int prioridad;
 
         string obtenerPathLocal();
-        bool casiIgual(int A, int B, int precision);
+        static bool casiIgual(int A, int B, int precision);
+        static int distancia(int A, int B);
 
     public:
         Gesto();
-        Gesto(string infoGesto);
+        Gesto(string nombre, bool derecha);
+        Gesto(string nombre, bool derecha, string infoGesto);
 
         //Generacion de gesto
         void cargarInformacionDedo(vector<int> info);
         void cargarInformacionDedo(string ruta);
 
+        void cargarInformacionGesto(vector<Dedo> info);
+        void cargarInformacionGesto(string ruta);
+
         //Comprobacion de gesto
-        bool comprobarGesto(vector<vector<int>> informacion, int precision);
+        static int distanciaDedos (Dedo A, Dedo B);
+        bool comprobarGesto(vector<Dedo> informacion, int precision);
         bool comprobarDigito(vector<int> infoDigito, DIGITO digito, int precision);
 
         //
-        void setInfoGesto(vector<pair<bool, vector<int>>> informacion);
-        vector<pair<bool, vector<int>>> getInfoGesto();
+        Dedo getDedo(int indice);
+        void setInfoGesto(vector<Dedo> informacion);
+        vector<Dedo> getInfoGesto();
+        void setDerecha(bool derecha);
         string to_string();
 
 };
