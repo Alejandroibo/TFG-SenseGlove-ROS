@@ -10,6 +10,11 @@ void ConjuntoGestos::addGesto(Gesto gesto){
     gestos.push_back(gesto);
 }
 
+void ConjuntoGestos::addGesto(string nombre, bool derecha, string infoGesto){
+    Gesto nu_gesto(nombre, derecha, infoGesto);
+    gestos.push_back(nu_gesto);
+}
+
 Gesto ConjuntoGestos::getGesto(int indice){
     return gestos[indice];
 }

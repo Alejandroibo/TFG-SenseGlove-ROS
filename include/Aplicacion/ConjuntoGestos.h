@@ -19,6 +19,7 @@ class ConjuntoGestos{
         ConjuntoGestos();
 
         void addGesto(Gesto gesto);
+        void addGesto(string nombre, bool derecha, string infoGesto);
         Gesto getGesto(int indice);
 
         //Metodos para determinar parecido
