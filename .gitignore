@@ -1,7 +1,17 @@
 #Gitignore para TFG-SenseGlove-ROS, basado en SenseGlove_API
 
+### Carpeta padre ###
+
 #Ignorar carpeta buid
 build/*
+
+### Paquetes ROS ###
+
+ROS-WS/build/*
+ROS-WS/install/*
+ROS-WS/log/*
+
+### Seccion basada en el gitignore de la API ###
 
 #Don't need 200+ files just to show how SGConnect::Init() and SGConnect::Dispose() work
 Core/SGConnect/doc* 
