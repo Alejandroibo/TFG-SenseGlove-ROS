@@ -22,4 +22,6 @@ IMPORTANTE: Utilizar terminal "x64 Native Tools Command Prompt for VS 2019"
 Release Windows key.
 Type x64
 
-colcon build --merge-install
+colcon build --merge-install --packages-select 
+
+ros2 run "paquete" "nodo"

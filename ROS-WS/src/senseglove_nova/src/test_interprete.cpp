@@ -8,6 +8,9 @@
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
 
+#include "senseglove_nova/ConjuntoGestos.h"
+#include "senseglove_nova/Gesto.h"
+
 class TestInterprete : public rclcpp::Node {
     public:
         TestInterprete() : Node("interprete_guante") {
@@ -25,18 +28,41 @@ class TestInterprete : public rclcpp::Node {
         void cargarListaGestos(){
             ////// AÑADIR AQUI TUS GESTOS /////
             //conjunto.addGesto("test", true, "test")
+            Gesto g1("pulgarArriba", false), g2("pulgarBajo", false), g3("pulgarExtendido", false), g4("pulgarMedio", false);
+            g1.cargarInformacionDedo("/src/senseglove_nova/data/izquierda/dedos/1/pulgarArriba.txt");
+            g2.cargarInformacionDedo("/src/senseglove_nova/data/izquierda/dedos/1/pulgarBajo.txt");
+            g3.cargarInformacionDedo("/src/senseglove_nova/data/izquierda/dedos/1/pulgarExtendido.txt");
+            g4.cargarInformacionDedo("/src/senseglove_nova/data/izquierda/dedos/1/pulgarMedio.txt");
+
+            conjunto.addGesto(g1);
+            conjunto.addGesto(g2);
+            conjunto.addGesto(g3);
+            conjunto.addGesto(g4);
         }
 
         void crearMapaAcciones(){
-            traduccion = {{"InfoTest", "InfoResultadoTest"}};
+            traduccion = {
+                {"InfoTest", "InfoResultadoTest"},
+                {"NULL", "No hay gesto"},
+                {"pulgarArriba", "Gesto: Pulgar Arriba"},
+                {"pulgarBajo", "Gesto: Pulgar Abajo"},
+                {"pulgarExtendido", "Gesto: Pulgar Extendido"},
+                {"pulgarMedio", "Gesto: Pulgar Medio"},
+            };
         }
 
         void obtenerGesto(std_msgs::msg::String::SharedPtr msg) {
             RCLCPP_INFO(this->get_logger(), "Obtenemos: '%s'", msg->data.c_str());
 
-            RCLCPP_INFO(this->get_logger(), "Decimos que estamos haciendo el paripe por ahora");
+            std::string gestoInfo = msg->data.c_str();
 
-            std::string res = traduccion["InfoTest"];
+            Gesto gestoGuante("GestoGuante", false, gestoInfo);
+
+            Gesto resultado = conjunto.getGestoProximo(gestoGuante, 10000);
+
+            RCLCPP_INFO(this->get_logger(), "Resultado: '%s'", resultado.getNombreGesto());
+
+            std::string res = traduccion[resultado.getNombreGesto()];
 
             publicarGesto(res);
         }
@@ -47,8 +73,9 @@ class TestInterprete : public rclcpp::Node {
             publisher_->publish(msg);        
         }
 
-        //ConjuntoGestos conjunto;
+        ConjuntoGestos conjunto;
         std::map<std::string, std::string> traduccion;
+
 
         rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_;
         rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_;
