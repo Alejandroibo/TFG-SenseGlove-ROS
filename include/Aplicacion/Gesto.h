@@ -51,6 +51,7 @@ class Gesto{
         void setInfoGesto(vector<Dedo> informacion);
         vector<Dedo> getInfoGesto();
         void setDerecha(bool derecha);
+        string getNombreGesto();
         string to_string();
 
 };

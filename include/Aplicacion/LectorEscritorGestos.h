@@ -17,6 +17,10 @@ class LectorEscritorGestos{
 
 
     public:
+
+        //Test
+        static void comprobarPathLocal();
+
         //Guardar
         static void guardarDatosDedo(bool derecha, string dedo);
         static void guardarGestoCompleto(bool derecha, Gesto gesto);

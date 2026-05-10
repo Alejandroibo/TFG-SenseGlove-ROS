@@ -51,6 +51,8 @@ void ControlGuantes::comprobarGuantes(){
 }
 
 string ControlGuantes::captarDatosGuante(bool derecha){
+    std::string infoGuante = "NULL";
+
     if (!HandLayer::DeviceConnected(derecha))
         return "";
 
@@ -98,9 +100,10 @@ string ControlGuantes::captarDatosGuante(bool derecha){
     if (HandLayer::GetHandPose(derecha, handPose)) {
         std::cout << ("Grabbed a HandPose for the " + hand + ":") << std::endl;
         std::cout << (handPose.ToString()) << std::endl;
+        infoGuante = handPose.ToString();
     } else {
         std::cout << ("We couldn't grab a " + hand + " pose. That can happen because sensor data was corrupted, or because the glove is (no longer) connected. Try again later..") << std::endl;
     }
 
-    return handPose.ToString();
+    return infoGuante;
 }

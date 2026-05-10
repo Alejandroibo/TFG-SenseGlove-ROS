@@ -7,6 +7,11 @@
 
 using namespace std;
 
+void LectorEscritorGestos::comprobarPathLocal(){
+    filesystem::path pa = filesystem::current_path();
+    cout << "The current path: " << pa.string() <<std::endl;
+}
+
 void LectorEscritorGestos::guardarDatosDedo(bool derecha, string dedo){
 
 }

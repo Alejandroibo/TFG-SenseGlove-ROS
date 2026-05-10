@@ -10,7 +10,7 @@ Gesto::Gesto(){
         else dedo.articulaciones = vector<int>(4, 0);
         informacionGesto.push_back(dedo);
     }
-
+    nombreGesto = "NULL";
     derecha = false;
 }
 
@@ -135,6 +135,9 @@ void Gesto::setInfoGesto(vector<Dedo> info){
     informacionGesto = info;
 }
 
+string Gesto::getNombreGesto(){
+    return nombreGesto;
+}
 
 string Gesto::to_string(){
 
