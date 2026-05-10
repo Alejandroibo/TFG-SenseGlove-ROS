@@ -1,0 +1,2 @@
+4
+Ring:	MCP-Abd: 0,	MCP-Flx: 0,	PIP-Flx: 0,	DIP-Flx: 0
