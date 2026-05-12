@@ -140,7 +140,7 @@ static std::string GuardarGestoBasico(bool derecha, String dedo){
     int dedoInt = stoi(dedo);
 
     //Cogemos la linea que nos interesa
-    for (int i = 1; i < dedoInt; i++){
+    for (int i = 0; i < dedoInt; i++){
         size_t finlinea = datoProcesado.find_first_of('\n');
         datoProcesado = datoProcesado.substr(finlinea+1);
     }
@@ -391,14 +391,15 @@ int32_t main()
 
                     if (respuesta == "1"){
                         do{
-                            std::cout << ("Elija un dedo:") << std::endl;
-                            std::cout << ("---- 1: Pulgar") << std::endl;
-                            std::cout << ("---- 2: Indice") << std::endl;
-                            std::cout << ("---- 3: Anular") << std::endl;          
-                            std::cout << ("---- 4: Corazon") << std::endl;
+                            std::cout << ("Elija digito:") << std::endl;
+                            std::cout << ("---- 0: Pulgar") << std::endl;
+                            std::cout << ("---- 1: Indice") << std::endl;
+                            std::cout << ("---- 2: Anular") << std::endl;          
+                            std::cout << ("---- 3: Corazon") << std::endl;
+                            std::cout << ("---- 4: Mano") << std::endl;
                             std::cout << ("---- 5: Atras") << std::endl;       
                             std::cin >> respuesta;       
-                        } while (respuesta != "1" && respuesta != "2" && respuesta != "3" && respuesta != "4" && respuesta != "5");
+                        } while (respuesta != "0" && respuesta != "1" && respuesta != "2" && respuesta != "3" && respuesta != "4" && respuesta != "5");
                         
                         if (respuesta != "5"){
                             std::cout<< GuardarGestoBasico(g_derecho,respuesta) << std::endl;

@@ -36,7 +36,7 @@ int32_t main(){
     //1: Generamos gestos para testear
     
     Gesto g1("pulgarArriba", false);
-    g1.cargarInformacionDedo("/../data/guantes/izquierda/dedos/1/pulgarArriba.txt");
+    g1.cargarInformacionDedo("/../data/guantes/izquierda/dedos/0/pulgarArriba.txt");
 /*
     std::cout<<"Cargamos:"<<std::endl;
     std::cin.get();
@@ -51,15 +51,23 @@ int32_t main(){
    // ControlGuantes::comprobarGuantes();
 
     Gesto g2("pulgarAbajo", false), g3("pulgarExtendido", false), g4("pulgarMedio", false);
-    g2.cargarInformacionDedo("/../data/guantes/izquierda/dedos/1/pulgarBajo.txt");
-    g3.cargarInformacionDedo("/../data/guantes/izquierda/dedos/1/pulgarExtendido.txt");
-    g4.cargarInformacionDedo("/../data/guantes/izquierda/dedos/1/pulgarMedio.txt");
+    g2.cargarInformacionDedo("/../data/guantes/izquierda/dedos/0/pulgarBajo.txt");
+    g3.cargarInformacionDedo("/../data/guantes/izquierda/dedos/0/pulgarExtendido.txt");
+    g4.cargarInformacionDedo("/../data/guantes/izquierda/dedos/0/pulgarMedio.txt");
+
+    ConjuntoGestos conjunto1;
+    conjunto1.addGesto(g1);
+    conjunto1.addGesto(g2);
+    conjunto1.addGesto(g3);
+    conjunto1.addGesto(g4);
+
+    Gesto g5("corazonContraido", false), g6("corazonExtendido", false);
+    g5.cargarInformacionDedo("/../data/guantes/izquierda/dedos/3/corazonContraidoFull.txt");
+    g6.cargarInformacionDedo("/../data/guantes/izquierda/dedos/3/corazonExtendido.txt");
 
     ConjuntoGestos conjunto;
-    conjunto.addGesto(g1);
-    conjunto.addGesto(g2);
-    conjunto.addGesto(g3);
-    conjunto.addGesto(g4);
+    conjunto.addGesto(g5);
+    conjunto.addGesto(g6);    
 
     string respuesta = "";
 
