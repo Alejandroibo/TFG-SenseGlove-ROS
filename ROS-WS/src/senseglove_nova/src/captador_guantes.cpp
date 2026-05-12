@@ -21,7 +21,7 @@ public:
         publisher_ = this->create_publisher<std_msgs::msg::String>("guante_estado", 10);
 
         timer_ = this->create_wall_timer(
-            std::chrono::milliseconds(1000),
+            std::chrono::milliseconds(500),
             std::bind(&CaptadorGuante::publicar_datos, this));
     }
 

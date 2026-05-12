@@ -13,7 +13,7 @@
 #include "turtlesim_guante/qos.h"
 
 #include "turtlesim_guante/ConjuntoGestos.h"
-#include "turtlesim_guante/Gesto.h"
+//#include "turtlesim_guante/Gesto.h"
 
 class InterpreteTurtlesim : public rclcpp::Node {
     public:
@@ -31,26 +31,39 @@ class InterpreteTurtlesim : public rclcpp::Node {
     private:
         void cargarListaGestos(){
             ////// AÑADIR AQUI TUS GESTOS /////
-            //conjunto.addGesto("test", true, "test")
             Gesto g1("pulgarArriba", false), g2("pulgarBajo", false), g3("pulgarExtendido", false), g4("pulgarMedio", false);
-            g1.cargarInformacionDedo("/src/turtlesim_guante/data/izquierda/dedos/1/pulgarArriba.txt");
-            g2.cargarInformacionDedo("/src/turtlesim_guante/data/izquierda/dedos/1/pulgarBajo.txt");
-            g3.cargarInformacionDedo("/src/turtlesim_guante/data/izquierda/dedos/1/pulgarExtendido.txt");
-            g4.cargarInformacionDedo("/src/turtlesim_guante/data/izquierda/dedos/1/pulgarMedio.txt");
+            g1.cargarInformacionDedo("/src/turtlesim_guante/data/izquierda/dedos/0/pulgarArriba.txt");
+            g2.cargarInformacionDedo("/src/turtlesim_guante/data/izquierda/dedos/0/pulgarBajo.txt");
+            g3.cargarInformacionDedo("/src/turtlesim_guante/data/izquierda/dedos/0/pulgarExtendido.txt");
+            g4.cargarInformacionDedo("/src/turtlesim_guante/data/izquierda/dedos/0/pulgarMedio.txt");
 
-            conjunto.addGesto(g1);
-            conjunto.addGesto(g2);
-            conjunto.addGesto(g3);
-            conjunto.addGesto(g4);
+            conjuntoPulgar.addGesto(g1);
+            conjuntoPulgar.addGesto(g2);
+            conjuntoPulgar.addGesto(g3);
+            conjuntoPulgar.addGesto(g4);
+
+            Gesto g5("dedosContraidos", false), g6("dedosExtendidos", false);
+            g5.cargarInformacionDedo("/src/turtlesim_guante/data/izquierda/dedos/3/corazonContraidoFull.txt");
+            g6.cargarInformacionDedo("/src/turtlesim_guante/data/izquierda/dedos/3/corazonExtendido.txt");
+
+            conjuntoDedos.addGesto(g5);
+            conjuntoDedos.addGesto(g6);    
         }
 
         void crearMapaAcciones(){
-            traduccion = {
+            traduccionPulgar = {
                 {"NULL", 0},
                 {"pulgarArriba", 1},
                 {"pulgarBajo", 2},
                 {"pulgarExtendido", 3},
                 {"pulgarMedio", 4},
+                {"corazonContraido", 5},
+                {"corazonExtendido", 6},                
+            };
+            traduccionDedos = {
+                {"NULL", 0},
+                {"dedosContraidos", 0},
+                {"dedosExtendidos", 1},                
             };
         }
 
@@ -61,31 +74,36 @@ class InterpreteTurtlesim : public rclcpp::Node {
 
             Gesto gestoGuante("GestoGuante", false, gestoInfo);
 
-            Gesto resultado = conjunto.getGestoProximo(gestoGuante, 10000);
+            Gesto resultadoPulgar = conjuntoPulgar.getGestoProximo(gestoGuante, 10000);
+            Gesto resultadoDedos = conjuntoDedos.getGestoProximo(gestoGuante, 10000);
 
-            RCLCPP_INFO(this->get_logger(), "Resultado: '%s'", resultado.getNombreGesto());
+            RCLCPP_INFO(this->get_logger(), "Gesto Pulgar: '%s'", resultadoPulgar.getNombreGesto());
+            RCLCPP_INFO(this->get_logger(), "Gesto Dedos: '%s'", resultadoDedos.getNombreGesto());
 
             double linear = 0.0;
             double angular = 0.0;
-            //std::string res = resultado.getNombreGesto();
-            int res = traduccion[resultado.getNombreGesto()];
+            //std::string resPulgar = resultadoPulgar.getNombreGesto();
+            int resPulgar = traduccionPulgar[resultadoPulgar.getNombreGesto()];
+            int resDedos = traduccionDedos[resultadoDedos.getNombreGesto()];
 
-            switch (res){
-              case 1:
-                linear = 1.0;
-                break;
-              case 2:
-                linear = -1.0;
-                break;
-              case 3:
-                angular = 1.0;
-                break;
-              case 4:
-                angular = -1.0;
-                break;
-              default:
-                break;
-            };
+            if (resDedos == 1){
+                switch (resPulgar){
+                case 1:
+                    linear = 1.0;
+                    break;
+                case 2:
+                    linear = -1.0;
+                    break;
+                case 3:
+                    angular = -1.0;
+                    break;
+                case 4:
+                    angular = 1.0;
+                    break;
+                default:
+                    break;
+                };
+            }
             
             if (linear != 0.0 || angular != 0.0) publicarMovimiento(linear, angular);
         }
@@ -98,9 +116,11 @@ class InterpreteTurtlesim : public rclcpp::Node {
             publisher_->publish(twist);        
         }
 
-        ConjuntoGestos conjunto;
+        ConjuntoGestos conjuntoPulgar;
+        ConjuntoGestos conjuntoDedos;
 
-        std::map<std::string, int> traduccion;
+        std::map<std::string, int> traduccionPulgar;
+        std::map<std::string, int> traduccionDedos;
 
         double scale_linear = 2.0;
         double scale_angular = 2.0;
