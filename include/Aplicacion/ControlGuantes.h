@@ -32,6 +32,10 @@ class ControlGuantes{
         static void comprobarLibreria();
 
         static void comprobarGuantes();
+
+        static void vibracionGuante(bool derecha, float amplitud, float duracion, float frecuencia, SGCore::EHapticLocation localizacion);
+
+        static void feedbackFuerza(bool derecha, std::vector<float> dedosFF);
 };
 
 #endif  //CONTROLGUANTES
