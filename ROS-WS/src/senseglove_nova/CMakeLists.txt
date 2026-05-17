@@ -19,23 +19,43 @@ find_package(std_msgs REQUIRED)
 # SenseGlove SDK
 # =========================================================
 
-set(SGCORE_PATH
-  ${CMAKE_CURRENT_SOURCE_DIR}/lib/win64/msvc143/release
-)
+if (WIN32)
+  set(SGCORE_PATH
+    ${CMAKE_CURRENT_SOURCE_DIR}/lib/win64/msvc143/release
+  )
 
-add_library(SGCoreLib SHARED IMPORTED)
+  add_library(SGCoreLib SHARED IMPORTED)
 
-set_target_properties(SGCoreLib PROPERTIES
-  IMPORTED_IMPLIB ${SGCORE_PATH}/sgcore.lib
-  IMPORTED_LOCATION ${SGCORE_PATH}/sgcore.dll
-)
+  set_target_properties(SGCoreLib PROPERTIES
+    IMPORTED_IMPLIB ${SGCORE_PATH}/sgcore.lib
+    IMPORTED_LOCATION ${SGCORE_PATH}/sgcore.dll
+  )
 
-add_library(SGConnectLib SHARED IMPORTED)
+  add_library(SGConnectLib SHARED IMPORTED)
 
-set_target_properties(SGConnectLib PROPERTIES
-  IMPORTED_IMPLIB ${SGCORE_PATH}/sgconnect.lib
-  IMPORTED_LOCATION ${SGCORE_PATH}/sgconnect.dll
-)
+  set_target_properties(SGConnectLib PROPERTIES
+    IMPORTED_IMPLIB ${SGCORE_PATH}/sgconnect.lib
+    IMPORTED_LOCATION ${SGCORE_PATH}/sgconnect.dll
+  )
+
+elseif(UNIX)
+  set(SGCORE_PATH
+    $CMAKE_CURRENT_SOURCE_DIR/lib/linux/x86-64
+  )
+
+  add_library(SGCoreLib SHARED IMPORTED)
+
+  set_target_properties(SGCoreLib PROPERTIES
+    IMPORTED_LOCATION ${SGCORE_PATH}/libsgcore.so
+  )
+
+  add_library(SGConnectLib SHARED IMPORTED)
+
+  set_target_properties(SGConnectLib PROPERTIES
+    IMPORTED_LOCATION ${SGCORE_PATH}/libsgconnect.so
+  )
+
+endif()
 
 # =========================================================
 # Internal library
