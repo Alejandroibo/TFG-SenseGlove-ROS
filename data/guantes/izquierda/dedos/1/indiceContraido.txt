@@ -1,0 +1,2 @@
+1
+Index:	MCP-Abd: 0,	MCP-Flx: 68,	PIP-Flx: 97,	DIP-Flx: 87

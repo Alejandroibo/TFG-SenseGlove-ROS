@@ -55,7 +55,7 @@ string ControlGuantes::captarDatosGuante(bool derecha){
     std::string infoGuante = "NULL";
 
     if (!HandLayer::DeviceConnected(derecha))
-        return "";
+        return infoGuante;
 
     std::string hand = derecha ? "right hand" : "left hand";
     SGCore::EHapticGloveCalibrationState calState = HandLayer::GetCalibrationState(derecha);

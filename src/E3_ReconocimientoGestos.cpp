@@ -61,13 +61,21 @@ int32_t main(){
     conjunto1.addGesto(g3);
     conjunto1.addGesto(g4);
 
-    Gesto g5("corazonContraido", false), g6("corazonExtendido", false);
+    Gesto g5("manoContraida", false), g6("manoMitad", false), g7("manoExtendida", false);
+    g5.cargarInformacionDedo("/../data/guantes/izquierda/dedos/1/indiceContraido.txt");
+    g5.cargarInformacionDedo("/../data/guantes/izquierda/dedos/2/anularContraido.txt");
     g5.cargarInformacionDedo("/../data/guantes/izquierda/dedos/3/corazonContraidoFull.txt");
-    g6.cargarInformacionDedo("/../data/guantes/izquierda/dedos/3/corazonExtendido.txt");
+    g6.cargarInformacionDedo("/../data/guantes/izquierda/dedos/1/indiceMitad.txt");
+    g6.cargarInformacionDedo("/../data/guantes/izquierda/dedos/2/anularMitad.txt");
+    g6.cargarInformacionDedo("/../data/guantes/izquierda/dedos/3/corazonMitad.txt");
+    g7.cargarInformacionDedo("/../data/guantes/izquierda/dedos/1/indiceExtendido.txt");
+    g7.cargarInformacionDedo("/../data/guantes/izquierda/dedos/2/anularExtendido.txt");
+    g7.cargarInformacionDedo("/../data/guantes/izquierda/dedos/3/corazonExtendido.txt");
 
     ConjuntoGestos conjunto;
     conjunto.addGesto(g5);
-    conjunto.addGesto(g6);    
+    conjunto.addGesto(g6);
+    conjunto.addGesto(g7);
 
     string respuesta = "";
 
