@@ -1,0 +1,2 @@
+2
+Middle:	MCP-Abd: 0,	MCP-Flx: 29,	PIP-Flx: 41,	DIP-Flx: 37
