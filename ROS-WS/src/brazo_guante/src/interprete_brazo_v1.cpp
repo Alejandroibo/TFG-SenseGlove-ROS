@@ -34,10 +34,10 @@ class InterpreteBrazoRobot : public rclcpp::Node {
             ////// AÑADIR AQUI TUS GESTOS /////
             //Pulgar
             Gesto g_P_1("pulgarArriba", false), g_P_2("pulgarBajo", false), g_P_3("pulgarExtendido", false), g_P_4("pulgarMedio", false);
-            g_P_1.cargarInformacionDedo("/src/brazo_guante/data/izquierda/dedos/0/pulgarArriba.txt");
-            g_P_2.cargarInformacionDedo("/src/brazo_guante/data/izquierda/dedos/0/pulgarBajo.txt");
-            g_P_3.cargarInformacionDedo("/src/brazo_guante/data/izquierda/dedos/0/pulgarExtendido.txt");
-            g_P_4.cargarInformacionDedo("/src/brazo_guante/data/izquierda/dedos/0/pulgarMedio.txt");
+            g_P_1.cargarInformacionDedo("/src/brazo_guante/data/guantes/izquierda/dedos/0/pulgarArriba.txt");
+            g_P_2.cargarInformacionDedo("/src/brazo_guante/data/guantes/izquierda/dedos/0/pulgarBajo.txt");
+            g_P_3.cargarInformacionDedo("/src/brazo_guante/data/guantes/izquierda/dedos/0/pulgarExtendido.txt");
+            g_P_4.cargarInformacionDedo("/src/brazo_guante/data/guantes/izquierda/dedos/0/pulgarMedio.txt");
 
             conjuntoPulgar.addGesto(g_P_1);
             conjuntoPulgar.addGesto(g_P_2);
@@ -45,23 +45,23 @@ class InterpreteBrazoRobot : public rclcpp::Node {
             conjuntoPulgar.addGesto(g_P_4);
 
             //Indice + Anular
-            Gesto g_IA_1("IndiceAnularExtendido", false), g_IA_2("IndiceAnularMitad", false), g_IA_3("IndiceAnularContraido", false);
-            g_IA_1.cargarInformacionDedo("/src/brazo_guante/data/izquierda/dedos/1/indiceExtendido.txt");
-            g_IA_1.cargarInformacionDedo("/src/brazo_guante/data/izquierda/dedos/2/anularExtendido.txt");
-            g_IA_2.cargarInformacionDedo("/src/brazo_guante/data/izquierda/dedos/1/indiceMita.txt");
-            g_IA_2.cargarInformacionDedo("/src/brazo_guante/data/izquierda/dedos/2/anularMitad.txt");
-            g_IA_3.cargarInformacionDedo("/src/brazo_guante/data/izquierda/dedos/1/indiceContraido.txt");
-            g_IA_3.cargarInformacionDedo("/src/brazo_guante/data/izquierda/dedos/2/anularContraido.txt");
+            Gesto g_IA_1("IndAnuExtendido", false), g_IA_2("IndAnuMitad", false), g_IA_3("IndAnuContraido", false);
+            g_IA_1.cargarInformacionDedo("/src/brazo_guante/data/guantes/izquierda/dedos/1/indiceExtendido.txt");
+            g_IA_1.cargarInformacionDedo("/src/brazo_guante/data/guantes/izquierda/dedos/2/anularExtendido.txt");
+            g_IA_2.cargarInformacionDedo("/src/brazo_guante/data/guantes/izquierda/dedos/1/indiceMitad.txt");
+            g_IA_2.cargarInformacionDedo("/src/brazo_guante/data/guantes/izquierda/dedos/2/anularMitad.txt");
+            g_IA_3.cargarInformacionDedo("/src/brazo_guante/data/guantes/izquierda/dedos/1/indiceContraido.txt");
+            g_IA_3.cargarInformacionDedo("/src/brazo_guante/data/guantes/izquierda/dedos/2/anularContraido.txt");
 
             conjuntoIndiceAnular.addGesto(g_IA_1);
             conjuntoIndiceAnular.addGesto(g_IA_2);
             conjuntoIndiceAnular.addGesto(g_IA_3);
 
             //Corazon
-            Gesto g_C_1("corazonExtendido", false), g_C_2("corazonMitad", false), g_C_3("corazonContraido", false);
-            g_C_1.cargarInformacionDedo("/src/brazo_guante/data/izquierda/dedos/3/corazonContraido.txt");
-            g_C_2.cargarInformacionDedo("/src/brazo_guante/data/izquierda/dedos/3/corazonExtendido.txt");
-            g_C_3.cargarInformacionDedo("/src/brazo_guante/data/izquierda/dedos/3/corazonMitad.txt");
+            Gesto g_C_1("corExtendido", false), g_C_2("corMitad", false), g_C_3("corContraido", false);
+            g_C_3.cargarInformacionDedo("/src/brazo_guante/data/guantes/izquierda/dedos/3/corazonContraido.txt");
+            g_C_1.cargarInformacionDedo("/src/brazo_guante/data/guantes/izquierda/dedos/3/corazonExtendido.txt");
+            g_C_2.cargarInformacionDedo("/src/brazo_guante/data/guantes/izquierda/dedos/3/corazonMitad.txt");
 
             conjuntoCorazon.addGesto(g_C_1);
             conjuntoCorazon.addGesto(g_C_2);    
