@@ -14,7 +14,7 @@ void LectorEscritorGestos::comprobarPathLocal(){
 
 void LectorEscritorGestos::guardarDatosDedo(string info, bool derecho, string dedo){
 
-    std::string hand = derecho ? "right hand" : "left hand";
+    std::string hand = derecho ? "derecha" : "izquierda";
 
     //Comprobamos camino y creamos ruta
     //////////////////////////////////////

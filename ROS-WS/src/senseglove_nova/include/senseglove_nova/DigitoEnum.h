@@ -7,6 +7,7 @@ enum DIGITO{
     INDICE,
     ANULAR,
     CORAZON,
+    MANO,
 };
 
 #endif //DIGITOENUM

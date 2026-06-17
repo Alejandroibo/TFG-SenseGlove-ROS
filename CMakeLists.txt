@@ -15,6 +15,12 @@ set(IMPLEMENTS ${PROJECT_SOURCE_DIR}/lib/Aplicacion/)
 file( GLOB_RECURSE HPPS "${HEADERS}/*.h" "${HEADERS}/*.hpp" )
 file( GLOB_RECURSE CPPS "${IMPLEMENTS}/*.c" "${IMPLEMENTS}/*.cpp" )
 
+add_executable(GuardadoGestos
+    src/GuardadoGestos.cpp 
+    ${HPPS}
+    ${CPPS}
+)
+
 add_executable(E3_ReconocimientoGestos
     src/E3_ReconocimientoGestos.cpp 
     ${HPPS}
@@ -67,6 +73,11 @@ target_link_libraries(E2_GuardadoGestos
 )
 
 target_link_libraries(E3_ReconocimientoGestos
+    SGCoreLib
+    SGConnectLib
+)
+
+target_link_libraries(GuardadoGestos
     SGCoreLib
     SGConnectLib
 )
