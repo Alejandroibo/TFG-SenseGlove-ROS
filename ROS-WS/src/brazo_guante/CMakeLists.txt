@@ -44,6 +44,22 @@ ament_target_dependencies(senseglove_core
 # Nodes
 # =========================================================
 
+add_executable(feedback_brazo_v1.cpp
+  src/feedback_brazo_v1.cpp
+)
+
+target_link_libraries(feedback_brazo_v1
+  senseglove_core
+)
+
+ament_target_dependencies(feedback_brazo_v1
+  rclcpp
+  rclcpp_action
+  std_msgs
+  geometry_msgs
+  raptor_api_interfaces
+)
+
 add_executable(interprete_brazo_v1
   src/interprete_brazo_v1.cpp
 )
@@ -57,6 +73,7 @@ ament_target_dependencies(interprete_brazo_v1
   rclcpp_action
   std_msgs
   geometry_msgs
+  raptor_api_interfaces
 )
 
 # =========================================================

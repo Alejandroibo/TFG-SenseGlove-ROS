@@ -11,6 +11,8 @@
 #include <geometry_msgs/msg/twist_stamped.hpp>
 #include "std_msgs/msg/string.hpp"
 
+#include "raptor_api_interfaces/msg/gripper_status.hpp"
+
 //#include "brazo_guante/qos.h"
 
 #include "brazo_guante/ConjuntoGestos.h"
@@ -26,7 +28,9 @@ class InterpreteBrazoRobot : public rclcpp::Node {
             subscription_ = this->create_subscription<std_msgs::msg::String>(
                 "guante_estado", 10, std::bind(&InterpreteBrazoRobot::obtenerGesto, this, std::placeholders::_1));    
 
-            publisher_ = this->create_publisher<geometry_msgs::msg::TwistStamped>("/servo_node/delta_twist_cmds", 10);
+            publisher_ = this->create_publisher<geometry_msgs::msg::TwistStamped>("delta_twist_cmds", 10);
+
+            publisherPinza_ = this->create_publisher<raptor_api_interfaces::msg::GripperStatus>("in_gripper_status", 10);
         }
 
     private:
@@ -79,16 +83,16 @@ class InterpreteBrazoRobot : public rclcpp::Node {
 
             traduccionIndiceAnular ={
                 {"NULL", 0},
-                {"IndiceAnularMitad", 1},
-                {"IndiceAnularExtendido", 2},
-                {"IndiceAnularContraido", 3},       
+                {"IndAnuMitad", 1},
+                {"IndAnuExtendido", 2},
+                {"IndAnuContraido", 3},       
             };
 
             traduccionCorazon = {
                 {"NULL", 0},
-                {"corazonMitad", 1},
-                {"corazonExtendido", 2},
-                {"corazonContraido", 3},                
+                {"corMitad", 1},
+                {"corExtendido", 2},
+                {"corContraido", 3},                
             };
         }
 
@@ -122,6 +126,10 @@ class InterpreteBrazoRobot : public rclcpp::Node {
             int resIndAnl = traduccionIndiceAnular[resultadoIndiceAnular.getNombreGesto()];
             int resCorazon = traduccionCorazon[resultadoCorazon.getNombreGesto()];
 
+            RCLCPP_INFO(this->get_logger(), "int Pulgar: '%i'", resPulgar);
+            RCLCPP_INFO(this->get_logger(), "int Ind + An: '%i'", resIndAnl);
+            RCLCPP_INFO(this->get_logger(), "int Corazon: '%i'", resCorazon);
+
             if (resIndAnl == 2){    //Extendido
                 switch (resPulgar){
                 case 1:
@@ -133,12 +141,12 @@ class InterpreteBrazoRobot : public rclcpp::Node {
                     else linear_X = 1.0;
                     break;
                 case 3:
-                    if (resCorazon == 3) angular_Z = -1.0;
-                    else linear_Z = -1.0;
+                    if (resCorazon == 3) angular_Y = -1.0;
+                    else linear_Y = -1.0;
                     break;
                 case 4:
-                    if (resCorazon == 3) angular_Z = 1.0;
-                    else linear_Z = 1.0;
+                    if (resCorazon == 3) angular_Y = 1.0;
+                    else linear_Y = 1.0;
                     break;
                 default:
                     break;
@@ -146,12 +154,12 @@ class InterpreteBrazoRobot : public rclcpp::Node {
             } else if (resIndAnl == 1) {
                 switch (resPulgar){
                 case 1:
-                    if (resCorazon == 3) angular_Y = -1.0;
-                    else linear_Y = 1.0;
+                    if (resCorazon == 3) angular_Z = -1.0;
+                    else linear_Z = 1.0;
                     break;
                 case 2:
-                    if (resCorazon == 3) angular_Y = -1.0;
-                    else linear_Y = -1.0;
+                    if (resCorazon == 3) angular_Z = -1.0;
+                    else linear_Z = -1.0;
                     break;
                 default:
                     break;
@@ -161,6 +169,9 @@ class InterpreteBrazoRobot : public rclcpp::Node {
                 case 1:
                     valor_pinza = maxPinza;
                     break;
+                case 2:
+                    valor_pinza = medPinza;
+                    break;
                 case 3:
                     valor_pinza = minPinza;
                     break;
@@ -168,11 +179,13 @@ class InterpreteBrazoRobot : public rclcpp::Node {
                     break;
                 };                        
             }
+
+            RCLCPP_INFO(this->get_logger(), "valor_pinza: '%i'", valor_pinza);
             
-            if ((linear_X != 0.0 || linear_Y != 0.0 || linear_Z != 0.0) || 
-                (angular_X != 0.0 || angular_Y != 0.0 || angular_Z != 0.0) ||
-                (valor_pinza != 0)) 
-                publicarMovimiento(linear_X, linear_Y, linear_Z, angular_X, angular_Y, angular_Z);
+            publicarMovimiento(linear_X, linear_Y, linear_Z, angular_X, angular_Y, angular_Z);
+
+            if (valor_pinza != 0) publicarPinza(valor_pinza);
+
         }
 
         void publicarMovimiento(double linear_X, double linear_Y, double linear_Z, 
@@ -180,6 +193,7 @@ class InterpreteBrazoRobot : public rclcpp::Node {
 
             geometry_msgs::msg::TwistStamped mensaje;
             std::string header = "base_link";
+            //mensaje.header.stamp = this.->get_clock()->now();
             mensaje.header.frame_id = header;
             mensaje.twist.linear.x = linear_X * scale_linear_x;
             mensaje.twist.linear.y = linear_Y * scale_linear_y;
@@ -189,7 +203,21 @@ class InterpreteBrazoRobot : public rclcpp::Node {
             mensaje.twist.angular.y = angular_Y * scale_angular_y;
             mensaje.twist.angular.z = angular_Z * scale_angular_z;
 
+            RCLCPP_INFO(this->get_logger(), "publicando");
+
             publisher_->publish(mensaje);
+        }
+
+
+        void publicarPinza(int vPinza){
+
+            raptor_api_interfaces::msg::GripperStatus mensaje;
+
+            mensaje.external_witdh = vPinza;
+
+            RCLCPP_INFO(this->get_logger(), "valor_pinza 2: '%i'", vPinza);
+
+            this->publisherPinza_->publish(mensaje);
         }
 
         ConjuntoGestos conjuntoPulgar;
@@ -200,18 +228,21 @@ class InterpreteBrazoRobot : public rclcpp::Node {
         std::map<std::string, int> traduccionIndiceAnular;
         std::map<std::string, int> traduccionCorazon;
 
-        double scale_linear_x = 0.1;
-        double scale_linear_y = 0.1;
-        double scale_linear_z = 0.1;
+        double scale_linear_x = 1;
+        double scale_linear_y = 1;
+        double scale_linear_z = 1;
 
-        double scale_angular_x = 0.1;
-        double scale_angular_y = 0.1;
-        double scale_angular_z = 0.1;
+        double scale_angular_x = 1;
+        double scale_angular_y = 1;
+        double scale_angular_z = 1;
 
-        int maxPinza = 770;
-        int minPinza = 330;
+        int maxPinza = 700;
+        int medPinza = 520;
+        int minPinza = 340;
 
         rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr publisher_;
+
+        rclcpp::Publisher<raptor_api_interfaces::msg::GripperStatus>::SharedPtr publisherPinza_;
         
         rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_;
 };
