@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>senseglove_nova</name>
-  <version>0.0.0</version>
+  <version>1.0.0</version>
   <description>Nodos basicos del guante senseglove Nova 1: Captar informacion y devolver retroalimentacion.</description>
   <maintainer email="Alejandroibo131313@gmail.com">Aleja</maintainer>
   <license>MIT</license>

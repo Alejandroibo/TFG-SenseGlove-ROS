@@ -130,6 +130,21 @@ ament_target_dependencies(test_interprete
   std_msgs
 )
 
+# ---------------------------------------------------------
+
+add_executable(test_feedback
+  src/test_feedback.cpp
+)
+
+target_link_libraries(test_feedback
+  senseglove_core
+)
+
+ament_target_dependencies(test_feedback
+  rclcpp
+  std_msgs
+)
+
 # =========================================================
 # Install
 # =========================================================
@@ -139,6 +154,7 @@ install(TARGETS
   captador_guantes
   test_datos
   test_interprete
+  test_feedback
   DESTINATION lib/${PROJECT_NAME}
 )
 

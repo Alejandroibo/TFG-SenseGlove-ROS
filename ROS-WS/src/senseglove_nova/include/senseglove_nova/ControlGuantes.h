@@ -13,7 +13,10 @@
 #include <senseglove_nova/SenseGlove/Core/Tracking.hpp>
 #include <senseglove_nova/SenseGlove/Core/StringUtils.hpp>
 
+#include "senseglove_nova/DigitoEnum.h"
+
 #include <string>
+#include <vector>
 
 #ifndef CONTROLGUANTES_H
 
@@ -31,7 +34,13 @@ class ControlGuantes{
 
         static void comprobarLibreria();
 
+        static bool comprobarSenseCom();
+
         static void comprobarGuantes();
+
+        static void vibracionGuante(bool derecha, float amplitud, float duracion, float frecuencia, DIGITO zonaVibracion);
+
+        static void feedbackFuerza(bool derecha, std::vector<float> dedosFF);
 };
 
 #endif  //CONTROLGUANTES

@@ -1,5 +1,6 @@
 #include "senseglove_nova/ControlGuantes.h"
 #include <cmath>
+#include <thread>
 
 void ControlGuantes::comprobarLibreria(){
     std::cout << ("Testing " + SGCore::Library::Version() + ", compiled for " + SGCore::Library::BackendVersion());
@@ -12,6 +13,25 @@ void ControlGuantes::comprobarLibreria(){
     std::cout << ("=========================================================================") << std::endl;
 }
 
+bool ControlGuantes::comprobarSenseCom(){
+    bool connectionsActive = SGCore::SenseCom::ScanningActive();//returns true if SenseCom (or another program) has started the SenseGlove Communications Process.
+    if (!connectionsActive)                                    // If this process is not running yet, we can "Force-Start" SenseCom. Provided it has run on this PC at least once.
+    {
+        std::cout << ("SenseCom is not yet running. Without it, we cannot connect to SenseGlove devices.") << std::endl;
+        bool startedSenseCom = SGCore::SenseCom::StartupSenseCom();//Returns true if the process was started.
+        if (startedSenseCom) {
+            std::cout << ("Successfully started SenseCom. It will take a few seconds to connect...") << std::endl;
+            connectionsActive = SGCore::SenseCom::ScanningActive();//this will return false immedeately after you called StartupSenseCom(). Because the program has yet to initialize.
+                                                                    // Even if SenseCom started and the connections process is active, there's no guarantee that the user has turned their device(s) on. More on that later.
+        } else                                                    // If StartupSenseCom() returns false, you've either never run SenseCom, or it is already running. But at that point, the ScanningActive() should have returned true.
+        {
+            std::cout << ("Could not Start the SenseCom process.") << std::endl;
+        }
+        std::cout << ("-------------------------------------------------------------------------") << std::endl;
+    }
+
+    return connectionsActive;
+}
 
 void ControlGuantes::comprobarGuantes(){
 
@@ -54,48 +74,12 @@ string ControlGuantes::captarDatosGuante(bool derecha){
     std::string infoGuante = "NULL";
 
     if (!HandLayer::DeviceConnected(derecha))
-        return "";
+        return infoGuante;
 
     std::string hand = derecha ? "right hand" : "left hand";
     SGCore::EHapticGloveCalibrationState calState = HandLayer::GetCalibrationState(derecha);
     SGCore:HandPose handPose;
-/*
-    if (calState == EHapticGloveCalibrationState::Unknown) {
-        std::cout << ("THe Calibration State of the " + hand + " is not known. So we cannot retrieve a proper HandPose...") << std::endl;
-    }
-    if (calState == EHapticGloveCalibrationState::MoveFingers)//improvised calibration
-    {
-        int32_t timeout = 20;             //every 20ms, since the Nova doesn't update more than 60Hz anyway.
-        int32_t sanityTimeout = 20 * 1000;//10 s timeout.
-        int32_t sanityTimer = 0;
 
-        int32_t moveTimer = 0;
-        int32_t moveTimeout = 1 * 1000;//s after you start moving
-        std::cout << ("Calibration on the " + hand + " is yet to be completed. If it's a Nova Glove, calibration will automatically happen as you call a GetHandPose() / GetSensorData() function.") << std::endl;
-        std::cout << ("Let's try it now: Move each of the sensors on your " + hand + " within the next " + std::to_string(sanityTimeout / 1000.0f) + " seconds. Pay special attention to your thumb sensor(s)") << std::endl;
-        do {
-            std::this_thread::sleep_for(std::chrono::milliseconds(timeout));//s to ms
-            HandLayer::GetHandPose(rightHand, handPose);//normally, you'd grab this mutliple times.
-            sanityTimer += timeout;
-            calState = HandLayer::GetCalibrationState(rightHand);
-            if (calState == EHapticGloveCalibrationState::AllSensorsMoved) {
-                moveTimer += timeout;
-            }
-        } while (sanityTimer < sanityTimeout && moveTimer < moveTimeout);
-
-        if (calState == EHapticGloveCalibrationState::MoveFingers)//you still haven't moved enough yet. That was the longer timeout.
-        {
-            std::cout << ("You haven't moved all sensors yet, so some of the angles might a bit off. But we can grab a HandPose either way. Press a key to continue...") << std::endl;
-            system("pause");
-        } else {
-            std::cout << ("You've moved enough of your fingers! Press a key to grab a proper pose... ") << std::endl;
-            system("pause");
-        }
-    } else {
-        std::cout << ("Press a key to grab a HandPose for the " + hand) << std::endl;
-        system("pause");
-    }
-*/
     //Actually grab a HandPose
     if (HandLayer::GetHandPose(derecha, handPose)) {
         std::cout << ("Grabbed a HandPose for the " + hand + ":") << std::endl;
@@ -106,4 +90,41 @@ string ControlGuantes::captarDatosGuante(bool derecha){
     }
 
     return infoGuante;
+}
+
+void ControlGuantes::vibracionGuante(bool derecha, float amplitud, float duracion, 
+    float frecuencia, DIGITO zonaVibracion){
+
+    if (!HandLayer::DeviceConnected(derecha)) return;
+
+    SGCore::EHapticLocation localizacion;
+
+    switch (zonaVibracion){
+        case DIGITO::PULGAR:
+            localizacion = EHapticLocation::ThumbTip;
+            break;
+        case DIGITO::INDICE:
+            localizacion = EHapticLocation::IndexTip;
+            break;
+        default:
+            localizacion = EHapticLocation::WholeHand;
+            break;
+    }
+
+    std::string hand = derecha ? "right hand" : "left hand";
+    if (HandLayer::SupportsCustomWaveform(derecha, localizacion)) {
+        SGCore::CustomWaveform waveform{amplitud, duracion, frecuencia};
+        HandLayer::SendCustomWaveform(derecha, waveform, localizacion);
+    } else {
+        std::cout << ("The " + hand + " does not support Custom Waveforms (at " + HapticGlove::ToString(localizacion) + "), so we're sending a vibration to the Index Finger instead") << std::endl;
+        //whole hand and / or custom waveforms not supported. So we're pulsing the index finger instead.
+        HandLayer::QueueCommand_VibroLevel(derecha, 1, 1.0f, true);
+        std::this_thread::sleep_for(std::chrono::milliseconds( (int32_t)(duracion * 1000) )); //s to ms
+        HandLayer::QueueCommand_VibroLevel(derecha, 1, 0.0f, true);//turn it back off
+    }
+}
+
+void ControlGuantes::feedbackFuerza(bool derecha, std::vector<float> dedosFF){
+    HandLayer::QueueCommand_ForceFeedbackLevels(derecha, dedosFF, true);
+    
 }

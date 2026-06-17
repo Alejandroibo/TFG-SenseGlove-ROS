@@ -13,6 +13,25 @@ void ControlGuantes::comprobarLibreria(){
     std::cout << ("=========================================================================") << std::endl;
 }
 
+bool ControlGuantes::comprobarSenseCom(){
+    bool connectionsActive = SGCore::SenseCom::ScanningActive();//returns true if SenseCom (or another program) has started the SenseGlove Communications Process.
+    if (!connectionsActive)                                    // If this process is not running yet, we can "Force-Start" SenseCom. Provided it has run on this PC at least once.
+    {
+        std::cout << ("SenseCom is not yet running. Without it, we cannot connect to SenseGlove devices.") << std::endl;
+        bool startedSenseCom = SGCore::SenseCom::StartupSenseCom();//Returns true if the process was started.
+        if (startedSenseCom) {
+            std::cout << ("Successfully started SenseCom. It will take a few seconds to connect...") << std::endl;
+            connectionsActive = SGCore::SenseCom::ScanningActive();//this will return false immedeately after you called StartupSenseCom(). Because the program has yet to initialize.
+                                                                    // Even if SenseCom started and the connections process is active, there's no guarantee that the user has turned their device(s) on. More on that later.
+        } else                                                    // If StartupSenseCom() returns false, you've either never run SenseCom, or it is already running. But at that point, the ScanningActive() should have returned true.
+        {
+            std::cout << ("Could not Start the SenseCom process.") << std::endl;
+        }
+        std::cout << ("-------------------------------------------------------------------------") << std::endl;
+    }
+
+    return connectionsActive;
+}
 
 void ControlGuantes::comprobarGuantes(){
 
@@ -74,9 +93,23 @@ string ControlGuantes::captarDatosGuante(bool derecha){
 }
 
 void ControlGuantes::vibracionGuante(bool derecha, float amplitud, float duracion, 
-    float frecuencia, SGCore::EHapticLocation localizacion){
+    float frecuencia, DIGITO zonaVibracion){
 
-        if (!HandLayer::DeviceConnected(derecha)) return;
+    if (!HandLayer::DeviceConnected(derecha)) return;
+
+    SGCore::EHapticLocation localizacion;
+
+    switch (zonaVibracion){
+        case DIGITO::PULGAR:
+            localizacion = EHapticLocation::ThumbTip;
+            break;
+        case DIGITO::INDICE:
+            localizacion = EHapticLocation::IndexTip;
+            break;
+        default:
+            localizacion = EHapticLocation::WholeHand;
+            break;
+    }
 
     std::string hand = derecha ? "right hand" : "left hand";
     if (HandLayer::SupportsCustomWaveform(derecha, localizacion)) {
