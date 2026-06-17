@@ -10,7 +10,7 @@ Gesto::Gesto(){
         else dedo.articulaciones = vector<int>(4, 0);
         informacionGesto.push_back(dedo);
     }
-    nombreGesto = "NULL";
+
     derecha = false;
 }
 

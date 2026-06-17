@@ -22,7 +22,7 @@ class LectorEscritorGestos{
         static void comprobarPathLocal();
 
         //Guardar
-        static void guardarDatosDedo(string info, bool derecho, string dedo);
+        static void guardarDatosDedo(bool derecha, string dedo);
         static void guardarGestoCompleto(bool derecha, Gesto gesto);
 
         //Cargar
