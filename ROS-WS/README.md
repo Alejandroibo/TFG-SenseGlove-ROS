@@ -2,15 +2,15 @@
 
 Zona de desarrollo de los paquetes ROS para los simuladores
 
-Sourcear ros2 (Underlay):
--Command Prompt
--cd C:\pixi_ws
--pixi shell
--call C:\pixi_ws\ros2-windows\local_setup.bat
+--Sourcear ros2 (Underlay):
+Command Prompt
+cd C:\pixi_ws
+pixi shell
+call C:\pixi_ws\ros2-windows\local_setup.bat
 
 Crear paquete:
 
--ros2 pkg create --build-type ament_cmake --license Apache-2.0 --node-name my_node my_package
+ros2 pkg create --build-type ament_cmake --license Apache-2.0 --node-name my_node my_package
 
 Ejecutar paquete:
 
