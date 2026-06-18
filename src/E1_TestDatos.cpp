@@ -24,25 +24,6 @@
 using namespace SGCore;
 using namespace SGCore::Kinematics;
 
-/// <summary> Test a vibration, taking into account timing </summary>
-static void TestVibration(bool rightHand, float amplitude, float duration, float frequency, SGCore::EHapticLocation location)
-{
-    if (!HandLayer::DeviceConnected(rightHand))
-        return;
-
-    std::string hand = rightHand ? "right hand" : "left hand";
-    if (HandLayer::SupportsCustomWaveform(rightHand, location)) {
-        SGCore::CustomWaveform waveform{amplitude, duration, frequency};
-        HandLayer::SendCustomWaveform(rightHand, waveform, location);
-    } else {
-        std::cout << ("The " + hand + " does not support Custom Waveforms (at " + HapticGlove::ToString(location) + "), so we're sending a vibration to the Index Finger instead") << std::endl;
-        //whole hand and / or custom waveforms not supported. So we're pulsing the index finger instead.
-        HandLayer::QueueCommand_VibroLevel(rightHand, 1, 1.0f, true);
-        std::this_thread::sleep_for(std::chrono::milliseconds( (int32_t)(duration * 1000) )); //s to ms
-        HandLayer::QueueCommand_VibroLevel(rightHand, 1, 0.0f, true);//turn it back off
-    }
-}
-
 /// <summary> Test HandPoses </summary>
 /// <param name="rightHand"></param>
 static void TestHandTracking(bool rightHand, int iteraciones, bool extra = false)
@@ -138,29 +119,6 @@ static void TestHandTracking(bool rightHand, int iteraciones, bool extra = false
     }
 }
 
-/// <summary> Test Wrist Tracking </summary>
-/// <param name="rightHand"></param>
-static void TestWristTracking(bool rightHand)
-{
-    if (!HandLayer::DeviceConnected(rightHand))
-        return;
-    std::string hand = rightHand ? "Right hand" : "Left hand";
-
-    // Since our Gloves do not have their own on-board tracking, we rely on another Tracking Source, like a Quest 2 controller:
-    EPositionalTrackingHardware trackingHardware = EPositionalTrackingHardware::Quest2Controller;
-    Vect3D trackerPosition = Vect3D(0.0f, 0.0f, 0.0f);
-    Quat trackerRotation = Quat::FromEuler(0.0f, 0.0f, 0.0f);
-
-    // We then calculate the wrist location as follows:
-    Vect3D wristPosition;
-    Quat wristRotation;
-    HandLayer::GetWristLocation(rightHand, trackerPosition, trackerRotation, trackingHardware, wristPosition, wristRotation);
-
-    std::cout << (hand + " wrist position (" + trackerPosition.ToString() + " mm, " + trackerRotation.ToEuler().ToString() + " rad) for "
-        + Tracking::ToString( trackingHardware ) + ": => " + wristPosition.ToString() + " mm, " + wristRotation.ToEuler().ToString() + " rad.") << std::endl;
-}
-
-
 
 int32_t main()
 {
@@ -248,13 +206,13 @@ int32_t main()
         std::string iters_s;
         int iters = 0;
         std::cout << ("Vamos a obtener y mostrar los datos del guante. Presione enter para continuar. ") << std::endl;
-        std::cout << ("Alternativamente introduzca el numero de iteraciones (Tiempo a mostrar los datos, defecto: 5)") << std::endl;
+        //std::cout << ("Alternativamente introduzca el numero de iteraciones (Tiempo a mostrar los datos, defecto: 5)") << std::endl;
         //std::cin >> iters;
 
         std::cin.get();
 
-        TestHandTracking(true, 10);
-        TestHandTracking(false, 10);
+        TestHandTracking(true, 5);
+        TestHandTracking(false, 5);
 /*
         std::cin.get();
 
@@ -262,15 +220,6 @@ int32_t main()
         TestHandTracking(false, 1, true);
 */
         std::cout << ("-------------------------------------------------------------------------") << std::endl;
-    }
-
-    //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    // 6Dof Wrist Tracking
-    {
-        std::cout << ("Finally, we'll test wrist tracking") << std::endl;
-
-        TestWristTracking(true);
-        TestWristTracking(false);
     }
 
 

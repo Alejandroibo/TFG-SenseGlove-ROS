@@ -2,5 +2,4 @@
 <launch>
   <node pkg="senseglove_nova" exec="captador_guantes" name="captador" />
   <node pkg="senseglove_nova" exec="test_interprete" name="interprete"/>
-  <node pkg="senseglove_nova" exec="test_feedback" name="feedback" />
 </launch>

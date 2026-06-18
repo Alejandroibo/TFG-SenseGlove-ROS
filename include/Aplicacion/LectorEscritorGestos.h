@@ -13,9 +13,6 @@
 using namespace std;
 
 class LectorEscritorGestos{
-    private:
-
-
     public:
 
         //Test
@@ -23,11 +20,11 @@ class LectorEscritorGestos{
 
         //Guardar
         static void guardarDatosDedo(string info, bool derecho, string dedo);
-        static void guardarGestoCompleto(bool derecha, Gesto gesto);
+        //static void guardarGestoCompleto(bool derecha, Gesto gesto);
 
         //Cargar
         static pair<DIGITO, vector<int>> cargarDatosDedo(string path);
-        static Gesto cargarGestoCompleto(string path);
+        //static Gesto cargarGestoCompleto(string path);
 
 };
 

@@ -58,6 +58,9 @@ class TestInterprete : public rclcpp::Node {
 
             Gesto gestoGuante("GestoGuante", false, gestoInfo);
 
+            //RCLCPP_INFO(this->get_logger(), "test: '%s'", gestoGuante.to_string().substr(15,28));
+            //std::cout<<gestoGuante.to_string()<<std::endl;
+
             Gesto resultado = conjunto.getGestoProximo(gestoGuante, 10000);
 
             RCLCPP_INFO(this->get_logger(), "Resultado: '%s'", resultado.getNombreGesto());

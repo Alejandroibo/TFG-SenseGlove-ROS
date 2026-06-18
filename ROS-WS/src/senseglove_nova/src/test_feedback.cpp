@@ -24,21 +24,25 @@ private:
         std::string info = msg->data.c_str();
 
         if (info == "Gesto: Pulgar Extendido"){
+            RCLCPP_INFO(this->get_logger(), "Vibramos palma del guante");
             ControlGuantes::vibracionGuante(false, amplitud, duracion, frecuencia, DIGITO::MANO);
         }
 
         if (info == "Gesto: Pulgar Abajo"){
+            RCLCPP_INFO(this->get_logger(), "Vibramos dedos pulgar e indice");
             ControlGuantes::vibracionGuante(false, amplitud, duracion, frecuencia, DIGITO::PULGAR);
             ControlGuantes::vibracionGuante(false, amplitud, duracion, frecuencia, DIGITO::INDICE);
         }
 
         if (info == "Gesto: Pulgar Medio"){
+            RCLCPP_INFO(this->get_logger(), "Aplicamos fuerza al dedo pulgar");
             std::vector<float> fingerFfb = { 1.0f, 0.0f, 0.0f, 0.0f, 0.0f };//there's 5 fingers.
 
             ControlGuantes::feedbackFuerza(false, fingerFfb);
         }
 
         if (info == "Gesto: Pulgar Arriba"){
+            RCLCPP_INFO(this->get_logger(), "No damos retroalimentacion");
             std::vector<float> fingerFfb = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };//there's 5 fingers.
 
             ControlGuantes::feedbackFuerza(false, fingerFfb);

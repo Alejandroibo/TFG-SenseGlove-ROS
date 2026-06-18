@@ -95,7 +95,7 @@ int32_t main()
         std::string respuesta;
 
         std::cout << ("Vamos a proceder a la lectura y guardado de gestos.") << std::endl;
-        std::cout << ("El proceso se puede hacer individualmente por cada dedo, o hacer una lectura completa de la mano.") << std::endl;
+        //std::cout << ("El proceso se puede hacer individualmente por cada dedo, o hacer una lectura completa de la mano.") << std::endl;
         std::cout << ("(Presione enter para continuar)") << std::endl;
         std::cin.get();
         
@@ -121,7 +121,7 @@ int32_t main()
                     std::cout<< ("Hay un guante derecho conectado.") <<std::endl;
                 }
                 if (HandLayer::DeviceConnected(false)){
-                    std::cout<< ("El guante conectado es el izquierdo. Los gestos se guardaran para la mano izquierda.") <<std::endl;
+                    std::cout<< ("Hay un guante izquierdo conectado.") <<std::endl;
                 }
 
                 do {
@@ -144,15 +144,7 @@ int32_t main()
             if (!salir){
                 do {
                     atras = false;
-                    do {
-                        std::cout << ("Por favor, elija una opcion:") << std::endl;
-                        std::cout << ("---- 1: Guardar gesto") << std::endl;
-                        std::cout << ("---- 2: Leer gesto") << std::endl;
-                        std::cout << ("---- 3: Atras") << std::endl;
-                        std::cin >> respuesta;
-                    } while (respuesta != "1" && respuesta != "2" && respuesta != "3");
 
-                    if (respuesta == "1"){
                         do{
                             std::cout << ("Por favor, elija un digito:") << std::endl;
                             std::cout << ("---- 0: Pulgar") << std::endl;
@@ -184,11 +176,6 @@ int32_t main()
                             }
                         }
 
-                    } else if (respuesta == "2"){
-                        std::cout << ("TO-DO") << std::endl;
-                    } else{
-                        atras = true;
-                    }
                 } while (!atras);
             }
 
