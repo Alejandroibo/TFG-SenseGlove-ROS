@@ -76,17 +76,17 @@ string ControlGuantes::captarDatosGuante(bool derecha){
     if (!HandLayer::DeviceConnected(derecha))
         return infoGuante;
 
-    std::string hand = derecha ? "right hand" : "left hand";
+    std::string hand = derecha ? "derecha" : "izquierda";
     SGCore::EHapticGloveCalibrationState calState = HandLayer::GetCalibrationState(derecha);
     SGCore:HandPose handPose;
 
     //Actually grab a HandPose
     if (HandLayer::GetHandPose(derecha, handPose)) {
-        std::cout << ("Grabbed a HandPose for the " + hand + ":") << std::endl;
+        std::cout << ("Obtenemos HandPose de la mano " + hand + ":") << std::endl;
         std::cout << (handPose.ToString()) << std::endl;
         infoGuante = handPose.ToString();
     } else {
-        std::cout << ("We couldn't grab a " + hand + " pose. That can happen because sensor data was corrupted, or because the glove is (no longer) connected. Try again later..") << std::endl;
+        std::cout << ("No se pudo coger los datos de la mano " + hand + ". Eso puede pasar porque la informacion del sensor este corrupta o el guante no este conectado. Intentelo de nuevo luego..") << std::endl;
     }
 
     return infoGuante;

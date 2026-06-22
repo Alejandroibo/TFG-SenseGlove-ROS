@@ -23,11 +23,11 @@ class Gesto{
         bool derecha; 
         vector<Dedo> informacionGesto;
         
-        int prioridad;
+        //int prioridad;
 
-        string obtenerPathLocal();
-        static bool casiIgual(int A, int B, int precision);
-        static int distancia(int A, int B);
+        //string obtenerPathLocal();
+        bool casiIgual(int A, int B, int precision);
+        //static int distancia(int A, int B);
 
     public:
         Gesto();
@@ -35,11 +35,11 @@ class Gesto{
         Gesto(string nombre, bool derecha, string infoGesto);
 
         //Generacion de gesto
-        void cargarInformacionDedo(vector<int> info);
+        //void cargarInformacionDedo(vector<int> info);
         void cargarInformacionDedo(string ruta);
 
-        void cargarInformacionGesto(vector<Dedo> info);
-        void cargarInformacionGesto(string ruta);
+        //void cargarInformacionGesto(vector<Dedo> info);
+        //void cargarInformacionGesto(string ruta);
 
         //Comprobacion de gesto
         static int distanciaDedos (Dedo A, Dedo B);
@@ -51,6 +51,7 @@ class Gesto{
         void setInfoGesto(vector<Dedo> informacion);
         vector<Dedo> getInfoGesto();
         void setDerecha(bool derecha);
+        bool getDerecha();
         string getNombreGesto();
         string to_string();
 

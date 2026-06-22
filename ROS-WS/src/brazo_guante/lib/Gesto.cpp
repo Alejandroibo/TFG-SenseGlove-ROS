@@ -71,11 +71,11 @@ Gesto::Gesto(string _nombre, bool _derecha, string infoGesto){
 bool Gesto::casiIgual(int objetivo, int aprox, int precision){
     return (abs(objetivo-aprox) <= precision);
 }
-
+/*
 int Gesto::distancia(int A, int B){
     return abs(A-B);
 }
-
+*/
 int Gesto::distanciaDedos(Dedo A, Dedo B){
     int distancia = 0;
     for (int i = 0; i < A.articulaciones.size(); i++){
@@ -121,6 +121,14 @@ bool Gesto::comprobarGesto(vector<Dedo> informacion, int precision){
 
     return esGesto;
 
+}
+
+void Gesto::setDerecha(bool _derecha){
+    derecha = _derecha;
+}
+
+bool Gesto::getDerecha(){
+    return derecha;
 }
 
 Dedo Gesto::getDedo(int indice){

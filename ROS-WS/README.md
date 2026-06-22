@@ -1,6 +1,18 @@
 # Workspace ROS
 
-Zona de desarrollo de los paquetes ROS para los simuladores
+Zona de desarrollo de los paquetes ROS para los simuladores.
+
+### brazo_guante
+Paquete con nodos para el sistema del brazo robot UR5
+
+### raptor_api_interfaces
+Paquete con nodos para el sistema del brazo robot UR5
+
+### senseglove_nova
+Paquete con el nodo captador y nodos de ejemplo
+
+### turtlesim_guante
+Paquete con nodos para el sistema de turtlesim
 
 ## Sourcear ros2 (Underlay):
 Command Prompt
@@ -15,9 +27,6 @@ call install\setup.bat
 
 ## Construir workspace:
 IMPORTANTE: Utilizar terminal "x64 Native Tools Command Prompt for VS 2019"
-Press Windows key.
-Release Windows key.
-Type x64
 
 colcon build --merge-install 
 
@@ -39,7 +48,7 @@ ros2 run senseglove_nova test_interprete
 
 ros2 run senseglove_nova test_feedback
 
-#### senseglove_nova
+#### turtlesim_guante
 
 ros2 run senseglove_nova captador_guantes
 
@@ -47,7 +56,16 @@ ros2 run turtlesim_guante interprete_turtlesim
 
 ros2 run turtlesim turtlesim_node
 
-## Ejecutar archivo launch:
+#### brazo_robot
 
---Dentro de la carpeta launch
-ros2 launch "Archivo launch"
+ros2 run senseglove_nova captador_guantes
+
+ros2 run brazo_guante interprete_brazo_v1
+
+ros2 run turtlesim feedback_brazo_v1
+
+## Obtencion rosbag
+
+ros2 bag record -o prueba_turtlesim --compression-mode message --compression-format zstd /guante_estado /turtle1/cmd_vel
+
+ros2 bag record -o prueba_brazo --compression-mode message --compression-format zstd /guante_estado /delta_twist_cmds /in_gripper_status /grip_detected
